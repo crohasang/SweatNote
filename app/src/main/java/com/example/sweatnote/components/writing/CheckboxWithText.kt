@@ -1,4 +1,4 @@
-package com.example.sweatnote.components
+package com.example.sweatnote.components.writing
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable

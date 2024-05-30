@@ -1,15 +1,21 @@
 package com.example.sweatnote.screens
 
+import DiaryTextField
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,10 +25,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.sweatnote.components.CheckboxWithText
+import com.example.sweatnote.components.writing.CheckboxWithText
 
 @Composable
 fun Writing(navController: NavHostController) {
@@ -96,6 +103,28 @@ fun Writing(navController: NavHostController) {
         }
 
         Text("일기 작성")
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .padding(vertical = 8.dp), // 버튼과 TextField 사이에 간격을 추가합니다.
+            verticalArrangement = Arrangement.Bottom, // 버튼을 아래에 위치시킵니다.
+            horizontalAlignment = Alignment.End // 버튼을 오른쪽에 위치시킵니다.
+        ) {
+            DiaryTextField(
+                value = diaryEntry,
+                onValueChange = { diaryEntry = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+            )
+
+            Button(
+                onClick = { /* TODO: Handle submit action */ }
+            ) {
+                Text("제출")
+            }
+        }
 
     }
 }
