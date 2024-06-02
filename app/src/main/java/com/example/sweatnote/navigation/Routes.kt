@@ -5,4 +5,6 @@ sealed class Routes (val route: String) {
     object Writing : Routes("Writing")
     object Statistics : Routes("Statistics")
     object Search : Routes("Search")
+
+    object Written : Routes("Written")
 }

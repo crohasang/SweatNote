@@ -69,7 +69,7 @@ fun CalendarScreen(navController: NavHostController) {
                     text = "일기",
                     modifier = Modifier
                         .weight(1f) // 가로 공간을 동일하게 분할하여 차지하도록 설정
-                        .clickable { navController.navigate(Routes.Main.route) }, // 클릭 시 navigate 호출
+                        .clickable { navController.navigate(Routes.Written.route) }, // 클릭 시 navigate 호출
                     textAlign = TextAlign.Center,
                     fontSize = 30.sp
                 )
