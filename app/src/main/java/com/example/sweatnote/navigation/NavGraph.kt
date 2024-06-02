@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import com.example.sweatnote.Calender.CalendarScreen
 import com.example.sweatnote.screens.Statistics
 import com.example.sweatnote.screens.Writing
+import com.example.sweatnote.screens.Written
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -28,6 +29,10 @@ fun NavGraph(navController: NavHostController) {
 
         composable(route=Routes.Writing.route){
             Writing(navController)
+        }
+
+        composable(route=Routes.Written.route){
+            Written(navController)
         }
 
     }
