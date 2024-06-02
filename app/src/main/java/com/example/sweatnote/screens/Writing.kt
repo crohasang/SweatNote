@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,7 +22,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.graphics.Color.Companion.Gray
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.sweatnote.components.writing.CheckboxWithText
 
@@ -42,9 +49,11 @@ fun Writing(navController: NavHostController) {
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.Start,
+
     ) {
-        Text("수행한 운동을 선택하세요")
+        Text("수행한 운동을 선택하세요", fontWeight = FontWeight.ExtraBold, fontSize = 24.sp)
+        Spacer(modifier = Modifier.height(16.dp))
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
@@ -67,9 +76,13 @@ fun Writing(navController: NavHostController) {
                 }
             }
         }
+        Spacer(modifier = Modifier.height(16.dp))
+        Divider(color = Gray, thickness = 2.dp)
+        Spacer(modifier = Modifier.height(8.dp))
 
         // 감정 체크박스
-        Text("감정을 선택하세요")
+        Text("감정을 선택하세요", fontWeight = FontWeight.ExtraBold, fontSize = 24.sp)
+        Spacer(modifier = Modifier.height(16.dp))
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
@@ -86,16 +99,21 @@ fun Writing(navController: NavHostController) {
                     text = feeling
                 )
                 if (index < feelings.size - 1) {
-                    Spacer(modifier = Modifier.width(16.dp)) // 체크박스 사이에 간격을 추가합니다.
+                    Spacer(modifier = Modifier.width(3.dp)) // 체크박스 사이에 간격을 추가합니다.
                 }
             }
         }
 
-        Text("일기 작성")
+        Spacer(modifier = Modifier.height(16.dp))
+        Divider(color = Gray, thickness = 2.dp)
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text("일기 작성", fontWeight = FontWeight.ExtraBold, fontSize = 24.sp)
+        Spacer(modifier = Modifier.height(20.dp))
 
         Column(
             modifier = Modifier
-                .fillMaxWidth(0.9f)
+                .fillMaxWidth()
                 .padding(vertical = 8.dp), // 버튼과 TextField 사이에 간격을 추가합니다.
             verticalArrangement = Arrangement.Bottom, // 버튼을 아래에 위치시킵니다.
             horizontalAlignment = Alignment.End // 버튼을 오른쪽에 위치시킵니다.
@@ -105,13 +123,16 @@ fun Writing(navController: NavHostController) {
                 onValueChange = { diaryEntry = it },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
+                    .height(300.dp)
             )
 
+            Spacer(modifier = Modifier.height(16.dp))
+
             Button(
-                onClick = { /* TODO: Handle submit action */ }
+                onClick = { /* TODO: Handle submit action */ },
+                colors = ButtonDefaults.buttonColors(Color(0xFFF5F5F5)) // 배경색을 투명하게 설정합니다.
             ) {
-                Text("제출")
+                Text("제출하기", color = Black, fontWeight = FontWeight.Bold) // 글자 색깔을 검은색으로, 글자를 굵게 설정합니다.
             }
         }
 
