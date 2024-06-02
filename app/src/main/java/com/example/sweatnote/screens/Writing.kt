@@ -47,12 +47,20 @@ fun Writing(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start,
 
     ) {
-        Text("수행한 운동을 선택하세요", fontWeight = FontWeight.ExtraBold, fontSize = 24.sp)
+        Spacer(modifier = Modifier.height(50.dp))
+
+        Text("일기 작성", fontWeight = FontWeight.ExtraBold, fontSize = 32.sp,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+
+        Spacer(modifier = Modifier.height(50.dp))
+
+        Text("수행한 운동을 선택하세요", fontWeight = FontWeight.Bold, fontSize = 24.sp)
         Spacer(modifier = Modifier.height(16.dp))
         LazyRow(
             modifier = Modifier
@@ -81,7 +89,7 @@ fun Writing(navController: NavHostController) {
         Spacer(modifier = Modifier.height(8.dp))
 
         // 감정 체크박스
-        Text("감정을 선택하세요", fontWeight = FontWeight.ExtraBold, fontSize = 24.sp)
+        Text("감정을 선택하세요", fontWeight = FontWeight.Bold, fontSize = 24.sp)
         Spacer(modifier = Modifier.height(16.dp))
         LazyRow(
             modifier = Modifier
@@ -108,7 +116,7 @@ fun Writing(navController: NavHostController) {
         Divider(color = Gray, thickness = 2.dp)
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text("일기 작성", fontWeight = FontWeight.ExtraBold, fontSize = 24.sp)
+        Text("일기 작성", fontWeight = FontWeight.Bold, fontSize = 24.sp)
         Spacer(modifier = Modifier.height(20.dp))
 
         Column(
