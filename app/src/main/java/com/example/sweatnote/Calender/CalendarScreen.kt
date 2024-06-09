@@ -2,6 +2,7 @@ package com.example.sweatnote.Calender
 
 import android.annotation.SuppressLint
 import android.widget.CalendarView
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -20,14 +22,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.sweatnote.R
 import com.example.sweatnote.navigation.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,6 +44,7 @@ fun CalendarScreen(navController: NavHostController) {
     var date by remember {
         mutableStateOf("")
     }
+
 
     Scaffold(
         topBar = {
@@ -56,45 +64,58 @@ fun CalendarScreen(navController: NavHostController) {
                         date = "$day - ${month + 1} - $year"
                         navController.navigate(Routes.Writing.route)
                     }
+                    it.dateTextAppearance
                 })
                 Text(text = date)
+
             }
         },
         bottomBar = {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(8.dp).padding(bottom = 30.dp),
+                modifier = Modifier.fillMaxWidth().padding(8.dp).padding(bottom = 30.dp, start = 40.dp, end = 40.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
-                Text(
+                BottomBarItem(
                     text = "일기",
-                    modifier = Modifier
-                        .weight(1f) // 가로 공간을 동일하게 분할하여 차지하도록 설정
-                        .clickable { navController.navigate(Routes.Written.route) }, // 클릭 시 navigate 호출
-                    textAlign = TextAlign.Center,
-                    fontSize = 30.sp
+                    iconResId = R.drawable.baseline_edit_calendar_24,
+                    onClick = { navController.navigate(Routes.Written.route) }
                 )
-                Text(
+                BottomBarItem(
                     text = "통계",
-                    modifier = Modifier
-                        .weight(1f) // 가로 공간을 동일하게 분할하여 차지하도록 설정
-                        .clickable { navController.navigate(Routes.Statistics.route) }, // 클릭 시 navigate 호출
-                    textAlign = TextAlign.Center,
-                    fontSize = 30.sp
+                    iconResId = R.drawable.baseline_insert_chart_outlined_24,
+                    onClick = { navController.navigate(Routes.Statistics.route) }
                 )
-                Text(
+                BottomBarItem(
                     text = "검색",
-                    modifier = Modifier
-                        .weight(1f) // 가로 공간을 동일하게 분할하여 차지하도록 설정
-                        .clickable { navController.navigate(Routes.Search.route) }, // 클릭 시 navigate 호출
-                    textAlign = TextAlign.Center,
-                    fontSize = 30.sp
+                    iconResId = R.drawable.baseline_manage_search_24,
+                    onClick = { navController.navigate(Routes.Search.route) }
                 )
             }
         }
     )
 
 }
-
+@Composable
+fun BottomBarItem(text: String, iconResId: Int, onClick: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .clickable(onClick = onClick),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(id = iconResId),
+            contentDescription = null,
+            modifier = Modifier.size(40.dp)
+        )
+        Text(
+            text = text,
+            textAlign = TextAlign.Center,
+            fontSize = 25.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
+        )
+    }
+}
 @Preview
 @Composable
 fun CalendarScreenPreview() {
