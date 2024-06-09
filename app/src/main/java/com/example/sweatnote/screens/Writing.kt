@@ -51,6 +51,7 @@ fun Writing(navController: NavHostController) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
+    // 제출하기 버튼을 클릭했을 때 실행되는 함수
     fun handleSubmitClick() {
 
         // coroutineScope.launch를 통해 코드가 동기적으로(순차적으로) 실행되도록
@@ -68,7 +69,7 @@ fun Writing(navController: NavHostController) {
 //            diaryDatabase.diaryDao().insert(diaryEntry)
 
             // 메인 화면으로 돌아감
-            navController.navigate(Routes.Main.route)
+            suspend {navController.navigate(Routes.Main.route)}
         }
     }
 
