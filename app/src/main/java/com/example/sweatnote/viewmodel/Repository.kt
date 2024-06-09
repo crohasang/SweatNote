@@ -1,11 +1,10 @@
-package com.example.Mproject.viewmodel
+package com.example.sweatnote.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.LiveData
-import com.example.Mproject.roomDB.Diary
-import com.example.Mproject.roomDB.DiaryDao
-import com.example.Mproject.roomDB.DiaryDatabase
+import com.example.sweatnote.roomDB.Diary
 import com.example.sweatnote.roomDB.DiaryDao
+import com.example.sweatnote.roomDB.DiaryDatabase
 
 class DiaryRepository(application: Application) {
     private val diaryDao: DiaryDao

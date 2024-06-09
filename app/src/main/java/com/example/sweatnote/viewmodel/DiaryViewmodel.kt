@@ -4,8 +4,8 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
-import com.example.Mproject.viewmodel.DiaryRepository
 import com.example.sweatnote.roomDB.Diary
+import com.example.sweatnote.viewmodel.DiaryRepository
 import kotlinx.coroutines.launch
 
 class DiaryViewModel(application: Application) : AndroidViewModel(application) {
