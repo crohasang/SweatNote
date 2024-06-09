@@ -12,22 +12,85 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.sweatnote.navigation.Routes
+import kotlinx.coroutines.launch
 
 @Composable
 fun Written(navController: NavHostController) {
     val scrollState = rememberScrollState()
+
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
+    // 일기 삭제 여부 모달 상태
+    val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
+
+    // 편집 버튼 클릭 시 실행되는 함수
+    fun handleEditClick() {
+        // Writing 페이지로 이동하는데, 해당 날짜의 기록된 정보들이 반영되어 있어야 함
+    }
+
+    // 삭제 버튼 클릭 시 실행되는 함수
+    fun handleDeleteClick() {
+        setShowDialog(true)
+    }
+
+    // 일기 삭제 모달이 켜졌을 때
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                setShowDialog(false)
+            },
+            title = {
+                Text(text = "일기를 삭제하시겠습니까?")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            // 데이터베이스에서 일기를 삭제하는 코드
+
+                            // 예시
+//                            val diaryDatabase = DiaryDatabase.getInstance(context)
+//                            diaryDatabase.diaryDao().delete(/* diaryEntry */)
+
+                            // 메인 화면으로 돌아가는 코드
+                            suspend {navController.navigate(Routes.Main.route)}
+                        }
+                    }
+                ) {
+                    Text("예")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        setShowDialog(false)
+                    }
+                ) {
+                    Text("아니오")
+                }
+            }
+        )
+    }
 
 
     Column(
@@ -54,13 +117,13 @@ fun Written(navController: NavHostController) {
             modifier = Modifier.align(Alignment.End)
         ) {
             Button(
-                onClick = { /* TODO: Handle edit action */ },
+                onClick = { handleEditClick() },
                 colors = ButtonDefaults.buttonColors(Color(0xFFF5F5F5)) // 배경색을 투명하게 설정합니다.
             ) {
                 Icon(Icons.Filled.Edit, contentDescription = "수정", tint = Color.Black) // 수정 아이콘으로 변경
             }
             Button(
-                onClick = { /* TODO: Handle delete action */ },
+                onClick = { handleDeleteClick() },
                 colors = ButtonDefaults.buttonColors(Color(0xFFF5F5F5)) // 배경색을 투명하게 설정합니다.
             ) {
                 Icon(Icons.Filled.Delete, contentDescription = "삭제", tint = Color.Black) // 삭제 아이콘으로 변경
