@@ -12,6 +12,8 @@ navigationCompose = "2.8.0-alpha08"
 mpandroidchart = "v3.1.0"
 materialCalendarview = "1.4.3"
 viewbinding = "8.6.0-alpha05"
+roomKtx = "2.7.0-alpha03"
+roomCompiler = "2.7.0-alpha03"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -32,6 +34,8 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 mpandroidchart = { group = "com.github.PhilJay", name = "MPAndroidChart", version.ref = "mpandroidchart" }
 material-calendarview = { group = "com.prolificinteractive", name = "material-calendarview", version.ref = "materialCalendarview" }
 viewbinding = { group = "com.android.databinding", name = "viewbinding", version.ref = "viewbinding" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
