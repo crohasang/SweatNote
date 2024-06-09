@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.sweatnote.Calender.CalendarScreen
+import com.example.sweatnote.graphViews.StatsScreen
 import com.example.sweatnote.screens.Statistics
 import com.example.sweatnote.screens.Writing
 import com.example.sweatnote.screens.Written
@@ -24,7 +25,7 @@ fun NavGraph(navController: NavHostController) {
         }
 
         composable(route=Routes.Statistics.route){
-            Statistics(navController)
+            StatsScreen(navController)
         }
 
         composable(route=Routes.Writing.route){
