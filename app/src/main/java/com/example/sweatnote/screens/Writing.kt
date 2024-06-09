@@ -19,17 +19,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Gray
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.sweatnote.components.writing.CheckboxWithText
+import com.example.sweatnote.navigation.Routes
+import kotlinx.coroutines.launch
 
 @Composable
 fun Writing(navController: NavHostController) {
@@ -43,6 +47,31 @@ fun Writing(navController: NavHostController) {
 
     // 상세한 일기를 작성할 수 있는 TextField 추가
     var diaryEntry by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
+    fun handleSubmitClick() {
+
+        // coroutineScope.launch를 통해 코드가 동기적으로(순차적으로) 실행되도록
+
+        coroutineScope.launch {
+
+            // 데이터베이스에 저장하는 코드를 추가
+
+//            val diaryDatabase = DiaryDatabase.getInstance(context)
+//            val diaryEntry = DiaryEntry(
+//                workouts = selectedWorkouts,
+//                feeling = selectedFeeling,
+//                entry = diaryEntry
+//            )
+//            diaryDatabase.diaryDao().insert(diaryEntry)
+
+            // 메인 화면으로 돌아감
+            navController.navigate(Routes.Main.route)
+        }
+    }
+
 
     Column(
         modifier = Modifier
@@ -137,7 +166,7 @@ fun Writing(navController: NavHostController) {
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
-                onClick = { /* TODO: Handle submit action */ },
+                onClick = { handleSubmitClick() },
                 colors = ButtonDefaults.buttonColors(Color(0xFFF5F5F5)) // 배경색을 투명하게 설정합니다.
             ) {
                 Text("제출하기", color = Black, fontWeight = FontWeight.Bold) // 글자 색깔을 검은색으로, 글자를 굵게 설정합니다.
