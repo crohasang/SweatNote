@@ -42,13 +42,14 @@ import androidx.navigation.NavHostController
 import com.example.sweatnote.Calender.BottomBarItem
 import com.example.sweatnote.R
 import com.example.sweatnote.components.writing.CheckboxWithText
+import com.example.sweatnote.example.DiaryViewModel
 import com.example.sweatnote.navigation.Routes
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Writing(navController: NavHostController) {
+fun Writing(navController: NavHostController, viewModel: DiaryViewModel) {
     val workoutOptions = listOf("어깨", "가슴", "등", "하체", "유산소")
     var selectedWorkouts by remember { mutableStateOf(listOf<String>()) }
 
