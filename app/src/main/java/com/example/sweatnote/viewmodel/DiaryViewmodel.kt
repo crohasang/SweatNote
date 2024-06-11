@@ -5,6 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.example.sweatnote.roomDB.Diary
+import com.example.sweatnote.roomDB.EmotionType
+import com.example.sweatnote.roomDB.ExerciseType
 import com.example.sweatnote.viewmodel.DiaryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -38,4 +40,9 @@ class DiaryViewModel(application: Application) : AndroidViewModel(application) {
     fun getDiaryByDate(date: String): Flow<Diary?> {
         return repository.getDiaryByDate(date)
     }
+
+    // 운동 횟수와 감정의 횟수를 가져오는 메서드 추가
+    val exerciseCounts: LiveData<Map<ExerciseType, Int>> = repository.getExerciseCounts()
+    val emotionCounts: LiveData<Map<EmotionType, Int>> = repository.getEmotionCounts()
 }
+

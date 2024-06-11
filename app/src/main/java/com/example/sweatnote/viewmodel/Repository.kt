@@ -2,9 +2,12 @@ package com.example.sweatnote.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import com.example.sweatnote.roomDB.Diary
 import com.example.sweatnote.roomDB.DiaryDao
 import com.example.sweatnote.roomDB.DiaryDatabase
+import com.example.sweatnote.roomDB.EmotionType
+import com.example.sweatnote.roomDB.ExerciseType
 import kotlinx.coroutines.flow.Flow
 
 class DiaryRepository(application: Application) {
@@ -36,4 +39,22 @@ class DiaryRepository(application: Application) {
     fun getDiaryByDate(date: String): Flow<Diary?>{
         return diaryDao.getDiaryByDate(date)
     }
+
+    // 운동 횟수와 감정의 횟수를 가져오는 메서드 추가
+    fun getExerciseCounts(): LiveData<Map<ExerciseType, Int>> {
+        val result = MediatorLiveData<Map<ExerciseType, Int>>()
+        result.addSource(allDiaries) { diaries ->
+            result.value = diaries.flatMap { it.exercises }.groupingBy { it }.eachCount()
+        }
+        return result
+    }
+
+    fun getEmotionCounts(): LiveData<Map<EmotionType, Int>> {
+        val result = MediatorLiveData<Map<EmotionType, Int>>()
+        result.addSource(allDiaries) { diaries ->
+            result.value = diaries.groupingBy { it.emotion }.eachCount()
+        }
+        return result
+    }
+
 }

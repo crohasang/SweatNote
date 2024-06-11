@@ -2,6 +2,7 @@ package com.example.sweatnote.navigation
 
 import Search
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,7 +27,8 @@ fun NavGraph(navController: NavHostController, diaryViewModel: DiaryViewModel) {
         }
 
         composable(route=Routes.Statistics.route) {
-            StatsScreen(navController)
+            val diaryViewModel: DiaryViewModel = viewModel()
+            StatsScreen(navController = navController, viewModel = diaryViewModel)
         }
 
         composable(route=Routes.Writing.route) {
