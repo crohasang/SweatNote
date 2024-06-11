@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.example.sweatnote.roomDB.Diary
 import com.example.sweatnote.viewmodel.DiaryRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class DiaryViewModel(application: Application) : AndroidViewModel(application) {
@@ -34,7 +35,7 @@ class DiaryViewModel(application: Application) : AndroidViewModel(application) {
         return repository.searchDiariesByKeyword(keyword)
     }
 
-    fun getDiaryByDate(date: String): LiveData<Diary?> {
+    fun getDiaryByDate(date: String): Flow<Diary?> {
         return repository.getDiaryByDate(date)
     }
 }
