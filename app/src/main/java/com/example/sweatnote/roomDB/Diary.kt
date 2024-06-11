@@ -1,8 +1,10 @@
 package com.example.sweatnote.roomDB
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
+
 
 @Entity(tableName = "diary")
 data class Diary(
@@ -13,6 +15,7 @@ data class Diary(
     val exercises: List<ExerciseType>,
     val keywords: String?
 )
+
 
 enum class ExerciseType {
     어깨, 가슴, 등, 하체, 유산소
@@ -37,3 +40,4 @@ class Converters {
     fun toExerciseTypeList(value: String): List<ExerciseType> =
         value.split(",").map { ExerciseType.valueOf(it) }
 }
+

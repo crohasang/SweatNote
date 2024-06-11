@@ -6,36 +6,28 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.sweatnote.Calender.CalendarScreen
-import com.example.sweatnote.graphViews.StatsScreen
-import com.example.sweatnote.screens.Statistics
-import com.example.sweatnote.screens.Writing
-import com.example.sweatnote.screens.Written
+import com.example.sweatnote.screens.*
 import com.example.sweatnote.example.DiaryViewModel
 
 @Composable
 fun NavGraph(navController: NavHostController, diaryViewModel: DiaryViewModel) {
-
-    NavHost(navController=navController, startDestination = Routes.Main.route) {
-
-        composable(route=Routes.Main.route) {
+    NavHost(navController = navController, startDestination = Routes.Main.route) {
+        composable(Routes.Main.route) {
             CalendarScreen(navController)
         }
-
-        composable(route=Routes.Search.route) {
+        composable(Routes.Search.route) {
             Search(navController)
         }
-
-        composable(route=Routes.Statistics.route) {
-            StatsScreen(navController)
+        composable(Routes.Statistics.route) {
+            Statistics(navController, diaryViewModel)
         }
-
-        composable(route=Routes.Writing.route) {
-            Writing(navController, diaryViewModel)
+        composable(Routes.Writing.route + "/{date}") { backStackEntry ->
+            val date = backStackEntry.arguments?.getString("date") ?: ""
+            Writing(navController, diaryViewModel, date)
         }
-
-        composable(route=Routes.Written.route) {
-            Written(navController)
+        composable(Routes.Written.route + "/{date}") { backStackEntry ->
+            val date = backStackEntry.arguments?.getString("date") ?: ""
+            Written(navController, diaryViewModel, date)
         }
-
     }
 }
