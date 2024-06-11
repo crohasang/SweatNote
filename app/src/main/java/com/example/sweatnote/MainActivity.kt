@@ -20,7 +20,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
+import com.example.sweatnote.example.DiaryViewModel
 import com.example.sweatnote.navigation.NavGraph
 import com.example.sweatnote.ui.theme.SweatNoteTheme
 import kotlinx.coroutines.delay
@@ -32,7 +34,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        diaryViewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application)).get(DiaryViewModel::class.java)
+        diaryViewModel = ViewModelProvider(
+            owner = this,
+            factory = ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        ).get(DiaryViewModel::class.java)
 
         setContent {
             SweatNoteTheme {
