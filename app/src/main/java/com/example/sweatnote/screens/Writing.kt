@@ -27,7 +27,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,35 +57,17 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: String) {
+fun Writing(navController: NavHostController, viewModel: DiaryViewModel) {
     val workoutOptions = listOf("어깨", "가슴", "등", "하체", "유산소")
+    var selectedWorkouts by remember { mutableStateOf(listOf<String>()) }
 
     // 감정을 선택할 수 있는 버튼 추가
     val feelings = listOf("최악이에요", "별로에요", "보통이에요", "좋아요", "최고에요")
-
-
-    // navController에서 날짜를 가져옴
-    val date = navController.currentBackStackEntry?.arguments?.getString("date") ?: ""
-
-    // 해당 날짜의 일기를 가져옴
-    var diary by remember { mutableStateOf<Diary?>(null) }
-    var selectedWorkouts by remember { mutableStateOf(listOf<String>()) }
     var selectedFeeling by remember { mutableStateOf("") }
+
+
+    // 상세한 일기를 작성할 수 있는 TextField 추가
     var diaryEntry by remember { mutableStateOf("") }
-
-
-    LaunchedEffect(key1 = date) {
-        viewModel.getDiaryByDate(date).collect {
-            diary = it
-            // 일기가 존재하면 해당 일기의 운동, 감정, 내용을 가져옴(그렇지 않으면 기본값을 사용)
-            selectedWorkouts = diary?.exercises?.map { it.name } ?: listOf()
-            selectedFeeling = (diary?.emotion ?: "").toString()
-            diaryEntry = diary?.content ?: ""
-
-        }
-    }
-
-
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -96,15 +77,13 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: S
     // 제출하기 버튼을 클릭했을 때 실행되는 함수
     fun handleSubmitClick() {
         coroutineScope.launch {
-            val date = navController.currentBackStackEntry?.arguments?.getString("date") ?: ""
-
             try {
                 val diary = Diary(
-                    date = date,
+                    date = "2024-05-28",  // 실제 날짜를 여기에 삽입
                     content = diaryEntry,
-                    emotion = EmotionType.valueOf(selectedFeeling.toString()),
-                    exercises = selectedWorkouts.map {ExerciseType.valueOf(it)},
-                    keywords = diaryEntry
+                    emotion = EmotionType.valueOf(selectedFeeling.toUpperCase()),
+                    exercises = selectedWorkouts.map { ExerciseType.valueOf(it.toUpperCase()) },
+                    keywords = "키워드" // 필요에 따라 실제 키워드를 여기에 삽입
                 )
                 Log.d("Writing", "Inserting diary entry: $diary")
                 viewModel.insert(diary)
@@ -118,11 +97,12 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: S
         }
     }
 
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Sweat Note", fontSize = 30.sp, fontStyle = FontStyle.Italic) },
-                modifier = Modifier.clickable {
+                title = {Text(text ="Sweat Note", fontSize=30.sp, fontStyle = FontStyle.Italic)},
+                modifier = Modifier.clickable{
                     navController.navigate(Routes.Main.route)
                 }
             )
@@ -134,10 +114,12 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: S
                     .padding(top = 40.dp)
                     .padding(horizontal = 16.dp)
                     .verticalScroll(scrollState)
-                    .clickable(indication = null, interactionSource = remember { MutableInteractionSource() }) { keyboardController?.hide() },
+                    .clickable(indication = null,
+                        interactionSource = remember { MutableInteractionSource() }) { keyboardController?.hide() },
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start,
-            ) {
+
+                ) {
                 Spacer(modifier = Modifier.height(50.dp))
 
                 Text(
@@ -244,7 +226,7 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: S
                     .padding(8.dp)
                     .padding(bottom = 30.dp, start = 40.dp, end = 40.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+            ){
                 BottomBarItem(
                     text = "일기",
                     iconResId = R.drawable.baseline_edit_calendar_24,

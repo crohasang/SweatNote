@@ -32,9 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-
 import androidx.lifecycle.viewmodel.compose.viewModel
-
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.sweatnote.R
@@ -58,7 +56,7 @@ fun CalendarScreen(navController: NavHostController) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(text = "Sweat Note", fontSize = 50.sp, fontStyle = FontStyle.Italic) },
+                title = {Text(text ="Sweat Note", fontSize=50.sp, fontStyle = FontStyle.Italic)},
                 modifier = Modifier.padding(top = 50.dp)
             )
         },
@@ -81,9 +79,12 @@ fun CalendarScreen(navController: NavHostController) {
                             }
                         }
                     }
+                    it.dateTextAppearance
                 })
+                Text(text = date)
 
                 Text(text = date)
+
             }
         },
         bottomBar = {
@@ -93,7 +94,7 @@ fun CalendarScreen(navController: NavHostController) {
                     .padding(8.dp)
                     .padding(bottom = 30.dp, start = 40.dp, end = 40.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+            ){
                 BottomBarItem(
                     text = "일기",
                     iconResId = R.drawable.baseline_edit_calendar_24,
@@ -112,12 +113,13 @@ fun CalendarScreen(navController: NavHostController) {
             }
         }
     )
-}
 
+}
 @Composable
 fun BottomBarItem(text: String, iconResId: Int, onClick: () -> Unit) {
     Column(
-        modifier = Modifier.clickable(onClick = onClick),
+        modifier = Modifier
+            .clickable(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
@@ -134,7 +136,6 @@ fun BottomBarItem(text: String, iconResId: Int, onClick: () -> Unit) {
         )
     }
 }
-
 @Preview
 @Composable
 fun CalendarScreenPreview() {
