@@ -25,18 +25,23 @@ import com.example.sweatnote.navigation.NavGraph
 import com.example.sweatnote.ui.theme.SweatNoteTheme
 import kotlinx.coroutines.delay
 
+
 class MainActivity : ComponentActivity() {
+    private lateinit var diaryViewModel: DiaryViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
+        diaryViewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application)).get(DiaryViewModel::class.java)
+
         setContent {
             SweatNoteTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = Color(0xFFF5F5F5)
-
                 ) {
                     val navController = rememberNavController()
+
                     var showSplash by remember { mutableStateOf(true) }
 
                     // 스플래시 화면이 표시되는 동안 3초 동안 대기
@@ -50,14 +55,14 @@ class MainActivity : ComponentActivity() {
                     if (showSplash) {
                         SplashScreen()
                     } else {
-                        NavGraph(navController)
+                        NavGraph(navController = navController, diaryViewModel = diaryViewModel)
                     }
                 }
-
             }
         }
     }
 }
+
 
 
 

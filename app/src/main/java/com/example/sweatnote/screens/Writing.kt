@@ -42,13 +42,18 @@ import androidx.navigation.NavHostController
 import com.example.sweatnote.Calender.BottomBarItem
 import com.example.sweatnote.R
 import com.example.sweatnote.components.writing.CheckboxWithText
+import com.example.sweatnote.example.DiaryViewModel
 import com.example.sweatnote.navigation.Routes
+import com.example.sweatnote.roomDB.Diary
+import com.example.sweatnote.roomDB.DiaryDatabase
+import com.example.sweatnote.roomDB.EmotionType
+import com.example.sweatnote.roomDB.ExerciseType
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Writing(navController: NavHostController) {
+fun Writing(navController: NavHostController, viewModel: DiaryViewModel) {
     val workoutOptions = listOf("어깨", "가슴", "등", "하체", "유산소")
     var selectedWorkouts by remember { mutableStateOf(listOf<String>()) }
 
@@ -65,23 +70,16 @@ fun Writing(navController: NavHostController) {
 
     // 제출하기 버튼을 클릭했을 때 실행되는 함수
     fun handleSubmitClick() {
-
-        // coroutineScope.launch를 통해 코드가 동기적으로(순차적으로) 실행되도록
-
         coroutineScope.launch {
-
-            // 데이터베이스에 저장하는 코드를 추가
-
-//            val diaryDatabase = DiaryDatabase.getInstance(context)
-//            val diaryEntry = DiaryEntry(
-//                workouts = selectedWorkouts,
-//                feeling = selectedFeeling,
-//                entry = diaryEntry
-//            )
-//            diaryDatabase.diaryDao().insert(diaryEntry)
-
-            // 메인 화면으로 돌아감
-            suspend {navController.navigate(Routes.Main.route)}
+            val diary = Diary(
+                date = "2024-05-28",  // 실제 날짜를 여기에 삽입
+                content = diaryEntry,
+                emotion = EmotionType.valueOf(selectedFeeling.toUpperCase()),
+                exercises = selectedWorkouts.map { ExerciseType.valueOf(it.toUpperCase()) },
+                keywords = "키워드" // 필요에 따라 실제 키워드를 여기에 삽입
+            )
+            viewModel.insert(diary)
+            navController.navigate(Routes.Main.route)
         }
     }
 
