@@ -55,8 +55,8 @@ fun Written(navController: NavHostController) {
 
     val viewModel: DiaryViewModel = viewModel()
 
-    val date = remember { mutableStateOf("") }
-    val diary = viewModel.getDiaryByDate(date.value).collectAsState(initial = null)
+    val date = navController.currentBackStackEntry?.arguments?.getString("date") ?: ""
+    val diary = viewModel.getDiaryByDate(date).collectAsState(initial = null)
 
     // 일기 삭제 여부 모달 상태
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
@@ -64,7 +64,7 @@ fun Written(navController: NavHostController) {
 
     // 편집 버튼 클릭 시 실행되는 함수
     fun handleEditClick() {
-        // Writing 페이지로 이동하는데, 해당 날짜의 기록된 정보들이 반영되어 있어야 함
+        navController.navigate(Routes.Writing.route + "/$date")
     }
 
     // 삭제 버튼 클릭 시 실행되는 함수
@@ -85,12 +85,11 @@ fun Written(navController: NavHostController) {
                 TextButton(
                     onClick = {
                         coroutineScope.launch {
-                            // 데이터베이스에서 일기를 삭제하는 코드
+                            if(diary != null) {
+                                diary.value?.let { viewModel.delete(it) }
+                                navController.navigate(Routes.Main.route)
+                            }
 
-                            // 예시
-//                            val diaryDatabase = DiaryDatabase.getInstance(context)
-//                            diaryDatabase.diaryDao().delete(/* diaryEntry */)
-                            navController.navigate(Routes.Main.route)
                         }
                     }
                 ) {
@@ -189,7 +188,7 @@ fun Written(navController: NavHostController) {
 
                 Text("작성된 일기", fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(20.dp))
-                Text("일기 내용: ${diary.value?.content ?: "내용 없음"}")
+                Text("${diary.value?.content ?: "내용 없음"}")
 
                 Spacer(modifier = Modifier.height(50.dp))
 
