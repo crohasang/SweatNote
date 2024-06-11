@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import com.example.sweatnote.roomDB.Diary
 import com.example.sweatnote.roomDB.DiaryDao
 import com.example.sweatnote.roomDB.DiaryDatabase
+import kotlinx.coroutines.flow.Flow
 
 class DiaryRepository(application: Application) {
     private val diaryDao: DiaryDao
@@ -32,7 +33,7 @@ class DiaryRepository(application: Application) {
         return diaryDao.searchDiariesByKeyword(keyword)
     }
 
-    fun getDiaryByDate(date: String): LiveData<Diary?> {
+    fun getDiaryByDate(date: String): Flow<Diary?>{
         return diaryDao.getDiaryByDate(date)
     }
 }

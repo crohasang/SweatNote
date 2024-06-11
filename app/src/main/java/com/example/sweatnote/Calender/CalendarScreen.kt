@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,11 +32,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.sweatnote.R
+import com.example.sweatnote.example.DiaryViewModel
 import com.example.sweatnote.navigation.Routes
+import com.example.sweatnote.roomDB.Diary
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -44,6 +48,9 @@ fun CalendarScreen(navController: NavHostController) {
     var date by remember {
         mutableStateOf("")
     }
+
+    val coroutineScope = rememberCoroutineScope()
+    val viewModel: DiaryViewModel = viewModel()
 
 
     Scaffold(
@@ -62,17 +69,30 @@ fun CalendarScreen(navController: NavHostController) {
                 AndroidView(factory = {CalendarView(it)}, update = {
                     it.setOnDateChangeListener { calendarView, year, month, day ->
                         date = "$day - ${month + 1} - $year"
-                        navController.navigate(Routes.Writing.route)
+                        coroutineScope.launch {
+                            viewModel.getDiaryByDate(date).collect { diary: Diary? ->
+                                if (diary != null) {
+                                    navController.navigate(Routes.Written.createRoute(date))
+                                } else {
+                                    navController.navigate(Routes.Writing.createRoute(date))
+                                }
+                            }
+                        }
                     }
                     it.dateTextAppearance
                 })
+                Text(text = date)
+
                 Text(text = date)
 
             }
         },
         bottomBar = {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(8.dp).padding(bottom = 30.dp, start = 40.dp, end = 40.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .padding(bottom = 30.dp, start = 40.dp, end = 40.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
                 BottomBarItem(
