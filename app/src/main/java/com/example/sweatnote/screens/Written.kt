@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -36,6 +37,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.sweatnote.Calender.BottomBarItem
 import com.example.sweatnote.R
@@ -49,12 +51,17 @@ import kotlinx.coroutines.launch
 @Composable
 fun Written(navController: NavHostController, viewModel: DiaryViewModel, diary: Diary) { // Add Diary object
     val scrollState = rememberScrollState()
-
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
+    val viewModel: DiaryViewModel = viewModel()
+
+    val date = remember { mutableStateOf("") }
+    val diary = viewModel.getDiaryByDate(date.value).collectAsState(initial = null)
+
     // 일기 삭제 여부 모달 상태
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
+
 
     // 편집 버튼 클릭 시 실행되는 함수
     fun handleEditClick() {
@@ -81,9 +88,13 @@ fun Written(navController: NavHostController, viewModel: DiaryViewModel, diary: 
                     onClick = {
                         coroutineScope.launch {
                             // 데이터베이스에서 일기를 삭제하는 코드
-                            viewModel.delete(diary)
+//                            viewModel.delete(diary)
 
                             // 메인 화면으로 돌아가는 코드
+
+                            // 예시
+//                            val diaryDatabase = DiaryDatabase.getInstance(context)
+//                            diaryDatabase.diaryDao().delete(/* diaryEntry */)
                             navController.navigate(Routes.Main.route)
                         }
                     }
@@ -161,7 +172,8 @@ fun Written(navController: NavHostController, viewModel: DiaryViewModel, diary: 
 
                 Text("수행한 운동", fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(diary.exercises.joinToString(", "))
+
+                Text("수행한 운동: ${diary.value?.exercises?.joinToString(", ") ?: "운동 없음"}")
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -169,7 +181,9 @@ fun Written(navController: NavHostController, viewModel: DiaryViewModel, diary: 
                 // 감정 체크박스
                 Text("감정을 선택하세요", fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(diary.emotion.name)
+
+                Text("감정 상태: ${diary.value?.emotion?.name ?: "감정 없음"}")
+
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -177,7 +191,7 @@ fun Written(navController: NavHostController, viewModel: DiaryViewModel, diary: 
 
                 Text("작성된 일기", fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(20.dp))
-                Text(diary.content)
+                Text("일기 내용: ${diary.value?.content ?: "내용 없음"}")
 
                 Spacer(modifier = Modifier.height(50.dp))
 

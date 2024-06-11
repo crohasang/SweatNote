@@ -6,7 +6,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.example.sweatnote.roomDB.Diary
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DiaryDao {
@@ -26,5 +26,5 @@ interface DiaryDao {
     fun searchDiariesByKeyword(keyword: String): LiveData<List<Diary>>
 
     @Query("SELECT * FROM diary WHERE date = :date")
-    fun getDiaryByDate(date: String): LiveData<Diary?>
+    fun getDiaryByDate(date: String): Flow<Diary?>
 }
