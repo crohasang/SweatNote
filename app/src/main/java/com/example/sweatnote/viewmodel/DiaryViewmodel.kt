@@ -19,6 +19,18 @@ class DiaryViewModel(application: Application) : AndroidViewModel(application) {
     private val _insertedDiary = MutableLiveData<Diary?>()
     val insertedDiary: LiveData<Diary?> = _insertedDiary
 
+    fun getExerciseCount(): Flow<List<ExerciseCount>> {
+        return repository.getExerciseCount()
+    }
+
+    fun getEmotionCount(): Flow<List<EmotionCount>> {
+        return repository.getEmotionCount()
+    }
+
+    fun getDiaryByDate(date: String): Flow<Diary?> {
+        return repository.getDiaryByDate(date)
+    }
+
     fun insert(diary: Diary) {
         viewModelScope.launch {
             repository.insert(diary)
@@ -42,15 +54,7 @@ class DiaryViewModel(application: Application) : AndroidViewModel(application) {
         return repository.searchDiariesByKeyword(keyword)
     }
 
-    fun getDiaryByDate(date: String): Flow<Diary?> {
-        return repository.getDiaryByDate(date)
-    }
 
-    fun getExerciseCount(): Flow<List<ExerciseCount>> {
-        return repository.getExerciseCount()
-    }
 
-    fun getEmotionCount(): Flow<List<EmotionCount>> {
-        return repository.getEmotionCount()
-    }
+
 }

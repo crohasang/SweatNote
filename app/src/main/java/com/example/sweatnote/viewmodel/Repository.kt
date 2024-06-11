@@ -19,6 +19,18 @@ class DiaryRepository(application: Application) {
         allDiaries = diaryDao.getAllDiaries()
     }
 
+    fun getExerciseCount(): Flow<List<ExerciseCount>> {
+        return diaryDao.getExerciseCount()
+    }
+
+    fun getEmotionCount(): Flow<List<EmotionCount>> {
+        return diaryDao.getEmotionCount()
+    }
+
+    fun getDiaryByDate(date: String): Flow<Diary?> {
+        return diaryDao.getDiaryByDate(date)
+    }
+
     suspend fun insert(diary: Diary) {
         diaryDao.insert(diary)
     }
@@ -35,15 +47,4 @@ class DiaryRepository(application: Application) {
         return diaryDao.searchDiariesByKeyword(keyword)
     }
 
-    fun getDiaryByDate(date: String): Flow<Diary?>{
-        return diaryDao.getDiaryByDate(date)
-    }
-
-    fun getExerciseCount(): Flow<List<ExerciseCount>> {
-        return diaryDao.getExerciseCount()
-    }
-
-    fun getEmotionCount(): Flow<List<EmotionCount>> {
-        return diaryDao.getEmotionCount()
-    }
 }

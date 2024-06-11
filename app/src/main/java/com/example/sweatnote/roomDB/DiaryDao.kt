@@ -35,5 +35,11 @@ interface DiaryDao {
     fun getEmotionCount(): Flow<List<EmotionCount>>
 }
 
-data class ExerciseCount(val exercise: ExerciseType, val count: Int)
-data class EmotionCount(val emotion: EmotionType, val count: Int)
+data class ExerciseCount(
+    val exercises: String,
+    val count: Int
+)
+data class EmotionCount(
+    val emotion: String,
+    val count: Int
+)
