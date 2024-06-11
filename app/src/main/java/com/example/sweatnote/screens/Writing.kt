@@ -27,7 +27,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -69,12 +69,23 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: S
     val date = navController.currentBackStackEntry?.arguments?.getString("date") ?: ""
 
     // 해당 날짜의 일기를 가져옴
-    val diary by viewModel.getDiaryByDate(date).collectAsState(initial = null)
+    var diary by remember { mutableStateOf<Diary?>(null) }
+    var selectedWorkouts by remember { mutableStateOf(listOf<String>()) }
+    var selectedFeeling by remember { mutableStateOf("") }
+    var diaryEntry by remember { mutableStateOf("") }
 
-    // 일기가 존재하면 해당 일기의 운동, 감정, 내용을 가져옴(그렇지 않으면 기본값을 사용)
-    var selectedWorkouts by remember { mutableStateOf(diary?.exercises?.map { it.name } ?: listOf()) }
-    var selectedFeeling by remember { mutableStateOf(diary?.emotion ?: "") }
-    var diaryEntry by remember { mutableStateOf(diary?.content ?: "") }
+
+    LaunchedEffect(key1 = date) {
+        viewModel.getDiaryByDate(date).collect {
+            diary = it
+            // 일기가 존재하면 해당 일기의 운동, 감정, 내용을 가져옴(그렇지 않으면 기본값을 사용)
+            selectedWorkouts = diary?.exercises?.map { it.name } ?: listOf()
+            selectedFeeling = (diary?.emotion ?: "").toString()
+            diaryEntry = diary?.content ?: ""
+
+        }
+    }
+
 
 
     val context = LocalContext.current
