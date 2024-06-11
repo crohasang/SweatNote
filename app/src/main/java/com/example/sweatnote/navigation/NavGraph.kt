@@ -10,32 +10,32 @@ import com.example.sweatnote.graphViews.StatsScreen
 import com.example.sweatnote.screens.Statistics
 import com.example.sweatnote.screens.Writing
 import com.example.sweatnote.screens.Written
+import com.example.sweatnote.example.DiaryViewModel
 
 @Composable
-fun NavGraph(navController: NavHostController) {
+fun NavGraph(navController: NavHostController, diaryViewModel: DiaryViewModel) {
 
-    NavHost(navController=navController, startDestination = Routes.Main.route){
+    NavHost(navController=navController, startDestination = Routes.Main.route) {
 
-        composable(route=Routes.Main.route){
+        composable(route=Routes.Main.route) {
             CalendarScreen(navController)
         }
 
-        composable(route=Routes.Search.route){
+        composable(route=Routes.Search.route) {
             Search(navController)
         }
 
-        composable(route=Routes.Statistics.route){
+        composable(route=Routes.Statistics.route) {
             StatsScreen(navController)
         }
 
-        composable(route=Routes.Writing.route){
-            Writing(navController)
+        composable(route=Routes.Writing.route) {
+            Writing(navController, diaryViewModel)
         }
 
-        composable(route=Routes.Written.route){
+        composable(route=Routes.Written.route) {
             Written(navController)
         }
 
     }
-
 }
