@@ -15,7 +15,7 @@ data class Diary(
 )
 
 enum class ExerciseType {
-    어깨, 가슴, 등, 하체, 유산소ㅈㄷ
+    어깨, 가슴, 등, 하체, 유산소
 }
 
 enum class EmotionType {
