@@ -15,11 +15,11 @@ data class Diary(
 )
 
 enum class ExerciseType {
-    SHOULDER, CHEST, BACK, LEGS, CARDIO
+    어깨, 가슴, 등, 하체, 유산소ㅈㄷ
 }
 
 enum class EmotionType {
-    VERY_NEGATIVE, NEGATIVE, NEUTRAL, POSITIVE, VERY_POSITIVE
+    최악이에요, 별로에요, 보통이에요, 좋아요, 최고에요
 }
 
 class Converters {
