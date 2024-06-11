@@ -1,7 +1,6 @@
 package com.example.sweatnote
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -21,13 +20,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
 import com.example.sweatnote.example.DiaryViewModel
 import com.example.sweatnote.navigation.NavGraph
 import com.example.sweatnote.ui.theme.SweatNoteTheme
 import kotlinx.coroutines.delay
+
 
 class MainActivity : ComponentActivity() {
     private lateinit var diaryViewModel: DiaryViewModel
@@ -40,12 +39,6 @@ class MainActivity : ComponentActivity() {
             factory = ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         ).get(DiaryViewModel::class.java)
 
-        diaryViewModel.insertedDiary.observe(this, Observer { diary ->
-            diary?.let {
-                Log.d("MainActivity", "일기가 작성되었습니다!: ${diary.content}")
-            }
-        })
-
         setContent {
             SweatNoteTheme {
                 Surface(
@@ -56,7 +49,7 @@ class MainActivity : ComponentActivity() {
 
                     var showSplash by remember { mutableStateOf(true) }
 
-                    // 스플래시 화면이 표시되는 동안 1.5초 동안 대기
+                    // 스플래시 화면이 표시되는 동안 3초 동안 대기
                     LaunchedEffect(Unit) {
                         delay(1500L)
                         showSplash = false
@@ -74,6 +67,26 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+
+
+
+@Composable
+fun Greeting(name: String, modifier: Modifier = Modifier) {
+    Text(
+        text = "Hello $name!",
+        modifier = modifier
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun GreetingPreview() {
+    SweatNoteTheme {
+        Greeting("Android")
+    }
+}
+
 
 @Composable
 fun SplashScreen() {

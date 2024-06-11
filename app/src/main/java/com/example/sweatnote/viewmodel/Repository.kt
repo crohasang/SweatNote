@@ -1,13 +1,9 @@
 package com.example.sweatnote.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.LiveData
-import com.example.sweatnote.roomDB.Diary
-import com.example.sweatnote.roomDB.DiaryDao
-import com.example.sweatnote.roomDB.DiaryDatabase
-import com.example.sweatnote.roomDB.EmotionCount
-import com.example.sweatnote.roomDB.ExerciseCount
+import com.example.sweatnote.roomDB.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class DiaryRepository(application: Application) {
     private val diaryDao: DiaryDao
@@ -17,18 +13,6 @@ class DiaryRepository(application: Application) {
         val database = DiaryDatabase.getInstance(application)
         diaryDao = database.diaryDao()
         allDiaries = diaryDao.getAllDiaries()
-    }
-
-    fun getExerciseCount(): Flow<List<ExerciseCount>> {
-        return diaryDao.getExerciseCount()
-    }
-
-    fun getEmotionCount(): Flow<List<EmotionCount>> {
-        return diaryDao.getEmotionCount()
-    }
-
-    fun getDiaryByDate(date: String): Flow<Diary?> {
-        return diaryDao.getDiaryByDate(date)
     }
 
     suspend fun insert(diary: Diary) {
@@ -47,4 +31,20 @@ class DiaryRepository(application: Application) {
         return diaryDao.searchDiariesByKeyword(keyword)
     }
 
+    fun getDiaryByDate(date: String): Flow<Diary?> {
+        return diaryDao.getDiaryByDate(date)
+    }
+
+    // 운동 횟수와 감정의 횟수를 가져오는 메서드
+    fun getExerciseCounts(): Flow<Map<ExerciseType, Int>> {
+        return allDiaries.map { diaries ->
+            diaries.flatMap { it.exercises }.groupingBy { it }.eachCount()
+        }
+    }
+
+    fun getEmotionCounts(): Flow<Map<EmotionType, Int>> {
+        return allDiaries.map { diaries ->
+            diaries.groupingBy { it.emotion }.eachCount()
+        }
+    }
 }

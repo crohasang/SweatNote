@@ -2,29 +2,46 @@ package com.example.sweatnote.example
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.sweatnote.roomDB.Diary
-import com.example.sweatnote.roomDB.EmotionCount
-import com.example.sweatnote.roomDB.ExerciseCount
+import com.example.sweatnote.roomDB.EmotionType
+import com.example.sweatnote.roomDB.ExerciseType
 import com.example.sweatnote.viewmodel.DiaryRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class DiaryViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: DiaryRepository = DiaryRepository(application)
     val allDiaries: Flow<List<Diary>> = repository.allDiaries
 
-    private val _insertedDiary = MutableLiveData<Diary?>()
-    val insertedDiary: LiveData<Diary?> = _insertedDiary
+    private val _exerciseCounts = MutableStateFlow<Map<ExerciseType, Int>>(emptyMap())
+    val exerciseCounts: StateFlow<Map<ExerciseType, Int>> = _exerciseCounts
 
-    fun getExerciseCount(): Flow<List<ExerciseCount>> {
-        return repository.getExerciseCount()
+    private val _emotionCounts = MutableStateFlow<Map<EmotionType, Int>>(emptyMap())
+    val emotionCounts: StateFlow<Map<EmotionType, Int>> = _emotionCounts
+
+    init {
+        viewModelScope.launch {
+            repository.getExerciseCounts().collect {
+                _exerciseCounts.value = it
+            }
+        }
+        viewModelScope.launch {
+            repository.getEmotionCounts().collect {
+                _emotionCounts.value = it
+            }
+        }
     }
 
-    fun getEmotionCount(): Flow<List<EmotionCount>> {
-        return repository.getEmotionCount()
+    fun getExerciseCount(): Flow<Map<ExerciseType, Int>> {
+        return repository.getExerciseCounts()
+    }
+
+    fun getEmotionCount(): Flow<Map<EmotionType, Int>> {
+        return repository.getEmotionCounts()
     }
 
     fun getDiaryByDate(date: String): Flow<Diary?> {
@@ -34,7 +51,6 @@ class DiaryViewModel(application: Application) : AndroidViewModel(application) {
     fun insert(diary: Diary) {
         viewModelScope.launch {
             repository.insert(diary)
-            _insertedDiary.postValue(diary)
         }
     }
 
@@ -49,6 +65,7 @@ class DiaryViewModel(application: Application) : AndroidViewModel(application) {
             repository.delete(diary)
         }
     }
+
     fun searchDiariesByKeyword(keyword: String): Flow<List<Diary>> {
         return repository.searchDiariesByKeyword(keyword)
     }

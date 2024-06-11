@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.mpandroidchart)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
     kapt(libs.androidx.room.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

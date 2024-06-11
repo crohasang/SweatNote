@@ -27,19 +27,4 @@ interface DiaryDao {
 
     @Query("SELECT * FROM diary WHERE date = :date")
     fun getDiaryByDate(date: String): Flow<Diary?>
-
-    @Query("SELECT exercises, COUNT(*) as count FROM diary GROUP BY exercises")
-    fun getExerciseCount(): Flow<List<ExerciseCount>>
-
-    @Query("SELECT emotion, COUNT(*) as count FROM diary GROUP BY emotion")
-    fun getEmotionCount(): Flow<List<EmotionCount>>
 }
-
-data class ExerciseCount(
-    val exercises: String,
-    val count: Int
-)
-data class EmotionCount(
-    val emotion: String,
-    val count: Int
-)
