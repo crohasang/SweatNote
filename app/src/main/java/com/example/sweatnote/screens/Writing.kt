@@ -2,7 +2,10 @@ package com.example.sweatnote.screens
 
 import DiaryTextField
 import android.annotation.SuppressLint
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,9 +17,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -34,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -45,7 +50,6 @@ import com.example.sweatnote.components.writing.CheckboxWithText
 import com.example.sweatnote.example.DiaryViewModel
 import com.example.sweatnote.navigation.Routes
 import com.example.sweatnote.roomDB.Diary
-import com.example.sweatnote.roomDB.DiaryDatabase
 import com.example.sweatnote.roomDB.EmotionType
 import com.example.sweatnote.roomDB.ExerciseType
 import kotlinx.coroutines.launch
@@ -58,7 +62,7 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel) {
     var selectedWorkouts by remember { mutableStateOf(listOf<String>()) }
 
     // 감정을 선택할 수 있는 버튼 추가
-    val feelings = listOf("매우 부정적", "부정적", "보통", "긍정적", "매우 긍정적")
+    val feelings = listOf("최악이에요", "별로에요", "보통이에요", "좋아요", "최고에요")
     var selectedFeeling by remember { mutableStateOf("") }
 
 
@@ -67,21 +71,32 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel) {
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+    val scrollState = rememberScrollState()
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     // 제출하기 버튼을 클릭했을 때 실행되는 함수
     fun handleSubmitClick() {
         coroutineScope.launch {
-            val diary = Diary(
-                date = "2024-05-28",  // 실제 날짜를 여기에 삽입
-                content = diaryEntry,
-                emotion = EmotionType.valueOf(selectedFeeling.toUpperCase()),
-                exercises = selectedWorkouts.map { ExerciseType.valueOf(it.toUpperCase()) },
-                keywords = "키워드" // 필요에 따라 실제 키워드를 여기에 삽입
-            )
-            viewModel.insert(diary)
-            navController.navigate(Routes.Main.route)
+            try {
+                val diary = Diary(
+                    date = "2024-05-28",  // 실제 날짜를 여기에 삽입
+                    content = diaryEntry,
+                    emotion = EmotionType.valueOf(selectedFeeling.toUpperCase()),
+                    exercises = selectedWorkouts.map { ExerciseType.valueOf(it.toUpperCase()) },
+                    keywords = "키워드" // 필요에 따라 실제 키워드를 여기에 삽입
+                )
+                Log.d("Writing", "Inserting diary entry: $diary")
+                viewModel.insert(diary)
+                Log.d("Writing", "Diary entry inserted successfully")
+                Toast.makeText(context, "Diary entry inserted", Toast.LENGTH_SHORT).show()
+                navController.navigate(Routes.Main.route)
+            } catch (e: Exception) {
+                Log.e("Writing", "Error inserting diary entry", e)
+                Toast.makeText(context, "Error inserting diary entry", Toast.LENGTH_SHORT).show()
+            }
         }
     }
+
 
     Scaffold(
         topBar = {
@@ -97,7 +112,10 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel) {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(top = 40.dp)
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(scrollState)
+                    .clickable(indication = null,
+                        interactionSource = remember { MutableInteractionSource() }) { keyboardController?.hide() },
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start,
 
@@ -203,7 +221,10 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel) {
         },
         bottomBar = {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(8.dp).padding(bottom = 30.dp, start = 40.dp, end = 40.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .padding(bottom = 30.dp, start = 40.dp, end = 40.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
                 BottomBarItem(
