@@ -1,6 +1,7 @@
 package com.example.sweatnote.screens
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -64,7 +65,12 @@ fun Written(navController: NavHostController) {
 
     // 편집 버튼 클릭 시 실행되는 함수
     fun handleEditClick() {
-        navController.navigate(Routes.Writing.route + "/$date")
+        try {
+            navController.navigate(Routes.Writing.createRoute(date))
+        } catch (e: Exception) {
+            Log.e("Written", "Error navigating to Writing page", e)
+            // 필요에 따라 사용자에게 오류 메시지를 표시할 수 있습니다.
+        }
     }
 
     // 삭제 버튼 클릭 시 실행되는 함수
@@ -169,7 +175,7 @@ fun Written(navController: NavHostController) {
 
                 Text("수행한 운동", fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("수행한 운동: ${diary.value?.exercises?.joinToString(", ") ?: "운동 없음"}")
+                Text("${diary.value?.exercises?.joinToString(", ") ?: "운동 없음"}")
 
 
 
@@ -180,7 +186,7 @@ fun Written(navController: NavHostController) {
                 // 감정 체크박스
                 Text("감정을 선택하세요", fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("감정 상태: ${diary.value?.emotion?.name ?: "감정 없음"}")
+                Text("${diary.value?.emotion?.name ?: "감정 없음"}")
 
                 Spacer(modifier = Modifier.height(16.dp))
 
