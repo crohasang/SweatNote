@@ -1,18 +1,13 @@
 package com.example.sweatnote.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import com.example.sweatnote.roomDB.Diary
-import com.example.sweatnote.roomDB.DiaryDao
-import com.example.sweatnote.roomDB.DiaryDatabase
-import com.example.sweatnote.roomDB.EmotionType
-import com.example.sweatnote.roomDB.ExerciseType
+import com.example.sweatnote.roomDB.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class DiaryRepository(application: Application) {
     private val diaryDao: DiaryDao
-    val allDiaries: LiveData<List<Diary>>
+    val allDiaries: Flow<List<Diary>>
 
     init {
         val database = DiaryDatabase.getInstance(application)
@@ -32,29 +27,24 @@ class DiaryRepository(application: Application) {
         diaryDao.delete(diary)
     }
 
-    fun searchDiariesByKeyword(keyword: String): LiveData<List<Diary>> {
+    fun searchDiariesByKeyword(keyword: String): Flow<List<Diary>> {
         return diaryDao.searchDiariesByKeyword(keyword)
     }
 
-    fun getDiaryByDate(date: String): Flow<Diary?>{
+    fun getDiaryByDate(date: String): Flow<Diary?> {
         return diaryDao.getDiaryByDate(date)
     }
 
-    // 운동 횟수와 감정의 횟수를 가져오는 메서드 추가
-    fun getExerciseCounts(): LiveData<Map<ExerciseType, Int>> {
-        val result = MediatorLiveData<Map<ExerciseType, Int>>()
-        result.addSource(allDiaries) { diaries ->
-            result.value = diaries.flatMap { it.exercises }.groupingBy { it }.eachCount()
+    // 운동 횟수와 감정의 횟수를 가져오는 메서드
+    fun getExerciseCounts(): Flow<Map<ExerciseType, Int>> {
+        return allDiaries.map { diaries ->
+            diaries.flatMap { it.exercises }.groupingBy { it }.eachCount()
         }
-        return result
     }
 
-    fun getEmotionCounts(): LiveData<Map<EmotionType, Int>> {
-        val result = MediatorLiveData<Map<EmotionType, Int>>()
-        result.addSource(allDiaries) { diaries ->
-            result.value = diaries.groupingBy { it.emotion }.eachCount()
+    fun getEmotionCounts(): Flow<Map<EmotionType, Int>> {
+        return allDiaries.map { diaries ->
+            diaries.groupingBy { it.emotion }.eachCount()
         }
-        return result
     }
-
 }

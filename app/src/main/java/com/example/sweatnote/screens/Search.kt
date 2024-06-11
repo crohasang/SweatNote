@@ -27,6 +27,7 @@ import com.example.sweatnote.R
 import com.example.sweatnote.example.DiaryViewModel
 import com.example.sweatnote.navigation.Routes
 import com.example.sweatnote.roomDB.Diary
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,8 +42,8 @@ fun Search(navController: NavHostController, viewModel: DiaryViewModel = viewMod
     fun handleSearchClick() {
         scope.launch {
             try {
-                viewModel.searchDiariesByKeyword(text).collect {
-                    searchResults = it
+                viewModel.searchDiariesByKeyword(text).collect { results ->
+                    searchResults = results
                     Log.d("Search", "Search results: $searchResults")
                 }
             } catch (e: Exception) {
