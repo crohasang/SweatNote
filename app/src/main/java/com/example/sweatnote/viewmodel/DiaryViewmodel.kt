@@ -49,12 +49,7 @@ class DiaryViewModel(application: Application) : AndroidViewModel(application) {
             repository.delete(diary)
         }
     }
-
     fun searchDiariesByKeyword(keyword: String): Flow<List<Diary>> {
         return repository.searchDiariesByKeyword(keyword)
     }
-
-
-
-
 }
