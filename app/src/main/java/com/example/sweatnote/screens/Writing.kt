@@ -57,14 +57,13 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Writing(navController: NavHostController, viewModel: DiaryViewModel) {
+fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: String) {
     val workoutOptions = listOf("어깨", "가슴", "등", "하체", "유산소")
     var selectedWorkouts by remember { mutableStateOf(listOf<String>()) }
 
     // 감정을 선택할 수 있는 버튼 추가
     val feelings = listOf("최악이에요", "별로에요", "보통이에요", "좋아요", "최고에요")
     var selectedFeeling by remember { mutableStateOf("") }
-
 
     // 상세한 일기를 작성할 수 있는 TextField 추가
     var diaryEntry by remember { mutableStateOf("") }
@@ -79,7 +78,7 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel) {
         coroutineScope.launch {
             try {
                 val diary = Diary(
-                    date = "2024-05-28",  // 실제 날짜를 여기에 삽입
+                    date = date,
                     content = diaryEntry,
                     emotion = EmotionType.valueOf(selectedFeeling.toUpperCase()),
                     exercises = selectedWorkouts.map { ExerciseType.valueOf(it.toUpperCase()) },
@@ -97,12 +96,11 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel) {
         }
     }
 
-
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {Text(text ="Sweat Note", fontSize=30.sp, fontStyle = FontStyle.Italic)},
-                modifier = Modifier.clickable{
+                title = { Text(text = "Sweat Note", fontSize = 30.sp, fontStyle = FontStyle.Italic) },
+                modifier = Modifier.clickable {
                     navController.navigate(Routes.Main.route)
                 }
             )
@@ -114,12 +112,10 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel) {
                     .padding(top = 40.dp)
                     .padding(horizontal = 16.dp)
                     .verticalScroll(scrollState)
-                    .clickable(indication = null,
-                        interactionSource = remember { MutableInteractionSource() }) { keyboardController?.hide() },
+                    .clickable(indication = null, interactionSource = remember { MutableInteractionSource() }) { keyboardController?.hide() },
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start,
-
-                ) {
+            ) {
                 Spacer(modifier = Modifier.height(50.dp))
 
                 Text(
@@ -226,7 +222,7 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel) {
                     .padding(8.dp)
                     .padding(bottom = 30.dp, start = 40.dp, end = 40.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
-            ){
+            ) {
                 BottomBarItem(
                     text = "일기",
                     iconResId = R.drawable.baseline_edit_calendar_24,

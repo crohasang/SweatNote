@@ -1,8 +1,10 @@
 package com.example.sweatnote.roomDB
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
+
 
 @Entity(tableName = "diary")
 data class Diary(

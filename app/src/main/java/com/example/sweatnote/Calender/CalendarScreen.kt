@@ -31,7 +31,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.sweatnote.R
@@ -45,11 +44,10 @@ fun CalendarScreen(navController: NavHostController) {
         mutableStateOf("")
     }
 
-
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = {Text(text ="Sweat Note", fontSize=50.sp, fontStyle = FontStyle.Italic)},
+                title = { Text(text = "Sweat Note", fontSize = 50.sp, fontStyle = FontStyle.Italic) },
                 modifier = Modifier.padding(top = 50.dp)
             )
         },
@@ -58,23 +56,21 @@ fun CalendarScreen(navController: NavHostController) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize()
-            ){
-                AndroidView(factory = {CalendarView(it)}, update = {
-                    it.setOnDateChangeListener { calendarView, year, month, day ->
-                        date = "$day - ${month + 1} - $year"
-                        navController.navigate(Routes.Writing.route)
+            ) {
+                AndroidView(factory = { CalendarView(it) }, update = {
+                    it.setOnDateChangeListener { _, year, month, day ->
+                        date = "$year-${month + 1}-$day"
+                        navController.navigate("${Routes.Writing.route}/$date")
                     }
-                    it.dateTextAppearance
                 })
                 Text(text = date)
-
             }
         },
         bottomBar = {
             Row(
                 modifier = Modifier.fillMaxWidth().padding(8.dp).padding(bottom = 30.dp, start = 40.dp, end = 40.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
-            ){
+            ) {
                 BottomBarItem(
                     text = "일기",
                     iconResId = R.drawable.baseline_edit_calendar_24,
@@ -93,13 +89,12 @@ fun CalendarScreen(navController: NavHostController) {
             }
         }
     )
-
 }
+
 @Composable
 fun BottomBarItem(text: String, iconResId: Int, onClick: () -> Unit) {
     Column(
-        modifier = Modifier
-            .clickable(onClick = onClick),
+        modifier = Modifier.clickable(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
@@ -116,6 +111,7 @@ fun BottomBarItem(text: String, iconResId: Int, onClick: () -> Unit) {
         )
     }
 }
+
 @Preview
 @Composable
 fun CalendarScreenPreview() {
