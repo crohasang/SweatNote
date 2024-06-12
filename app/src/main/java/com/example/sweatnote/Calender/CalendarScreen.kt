@@ -5,7 +5,10 @@ import android.widget.CalendarView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -13,7 +16,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -21,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -28,19 +35,27 @@ import com.example.sweatnote.R
 import com.example.sweatnote.example.DiaryViewModel
 import com.example.sweatnote.navigation.Routes
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.util.Calendar
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CalendarScreen(navController: NavHostController) {
-    var date by remember { mutableStateOf("") }
+    var date by remember { mutableStateOf(LocalDate.now().toString()) }
+    var flag by remember { mutableStateOf(false)}
     val coroutineScope = rememberCoroutineScope()
     val viewModel: DiaryViewModel = viewModel()
+
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    val dancingscript = FontFamily(Font(R.font.dancingscript_semibold, FontWeight.SemiBold, FontStyle.Italic))
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = {Text(text ="Sweat Note", fontSize=50.sp, fontStyle = FontStyle.Italic)},
+                title = {Text(text ="Sweat Note", fontSize=50.sp, fontFamily = dancingscript, fontWeight = FontWeight.SemiBold)},
                 modifier = Modifier.padding(top = 50.dp)
             )
         },
@@ -52,23 +67,51 @@ fun CalendarScreen(navController: NavHostController) {
             ) {
                 AndroidView(factory = { CalendarView(it) }, update = {
                     it.setOnDateChangeListener { _, year, month, day ->
-                        date = "$day - ${month + 1} - $year"
+                        //date = "$day - ${month + 1} - $year"
+                        date = "$year-${month+1}-$day"
                         coroutineScope.launch {
                             viewModel.getDiaryByDate(date).collect { diary ->
                                 if (diary != null) {
-                                    navController.navigate(Routes.Written.createRoute(date))
+                                    flag = true
+                                    //navController.navigate(Routes.Written.createRoute(date))
                                 } else {
-                                    navController.navigate(Routes.Writing.createRoute(date))
+                                    flag = false
+                                    //navController.navigate(Routes.Writing.createRoute(date))
                                 }
                             }
                         }
                     }
-                    it.dateTextAppearance
+                    it.maxDate=Calendar.getInstance().timeInMillis
+                    it.setDate(dateFormat.parse(date)?.time ?:0)
                 })
-                Text(text = date)
-
-                Text(text = date)
-
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp),
+                    color = Color.Gray
+                )
+                Row(modifier = Modifier.fillMaxWidth().padding(top=10.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically){
+                    //Text(date)
+                    if(flag){
+                        Text("작성된 일기가 있습니다.", modifier = Modifier.padding(end = 20.dp), fontSize = 20.sp)
+                        Button(onClick= { navController.navigate(Routes.Written.createRoute(date)) },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(
+                                ContextCompat.getColor(LocalContext.current, R.color.teal_700)),
+                                contentColor = Color.White)){
+                            Text("조회")
+                        }
+                    }else{
+                        Text("작성된 일기가 없습니다.", modifier = Modifier.padding(end = 20.dp), fontSize = 20.sp)
+                        Button(onClick={ navController.navigate(Routes.Writing.createRoute(date)) },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(
+                                ContextCompat.getColor(LocalContext.current, R.color.teal_700)),
+                                contentColor = Color.White)){
+                            Text("작성")
+                        }
+                    }
+                }
             }
         },
         bottomBar = {

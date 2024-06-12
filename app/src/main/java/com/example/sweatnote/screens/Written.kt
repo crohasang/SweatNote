@@ -33,6 +33,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -61,6 +63,7 @@ fun Written(navController: NavHostController) {
     // 일기 삭제 여부 모달 상태
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
 
+    val dancingscript = FontFamily(Font(R.font.dancingscript_semibold, FontWeight.SemiBold, FontStyle.Italic))
 
     // 편집 버튼 클릭 시 실행되는 함수
     fun handleEditClick() {
@@ -112,7 +115,7 @@ fun Written(navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {Text(text ="Sweat Note", fontSize=30.sp, fontStyle = FontStyle.Italic)},
+                title = {Text(text ="Sweat Note", fontSize=30.sp, fontFamily = dancingscript, fontWeight = FontWeight.SemiBold)},
                 modifier = Modifier.clickable{
                     navController.navigate(Routes.Main.route)
                 }
