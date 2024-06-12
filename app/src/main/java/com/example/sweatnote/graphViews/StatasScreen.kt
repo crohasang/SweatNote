@@ -24,7 +24,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,10 +45,12 @@ fun StatsScreen(navController: NavHostController, viewModel: DiaryViewModel) {
     val exerciseCounts by viewModel.exerciseCounts.collectAsState()
     val emotionCounts by viewModel.emotionCounts.collectAsState()
 
+    val dancingscript = FontFamily(Font(R.font.dancingscript_semibold, FontWeight.SemiBold, FontStyle.Italic))
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Sweat Note", fontSize = 30.sp, fontStyle = FontStyle.Italic) },
+                title = { Text(text = "Sweat Note", fontSize = 30.sp, fontFamily = dancingscript, fontWeight = FontWeight.SemiBold) },
                 modifier = Modifier.clickable {
                     navController.navigate(Routes.Main.route)
                 }
