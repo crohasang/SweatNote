@@ -1,75 +1,78 @@
+package com.example.sweatnote.screens
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.sweatnote.Calender.BottomBarItem
 import com.example.sweatnote.R
+import com.example.sweatnote.example.DiaryViewModel
 import com.example.sweatnote.navigation.Routes
+import com.example.sweatnote.roomDB.Diary
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Search(navController: NavHostController) {
+fun Search(navController: NavHostController, viewModel: DiaryViewModel = viewModel()) {
+    var text by remember { mutableStateOf("") }
+    var searchResults by remember { mutableStateOf<List<Diary>>(emptyList()) }
+    val scope = rememberCoroutineScope()
 
+    val dancingscript = FontFamily(Font(R.font.dancingscript_semibold, FontWeight.SemiBold, FontStyle.Italic))
+
+    // Log and error handling
     fun handleSearchClick() {
-
-    // 데이터베이스에서 키워드가 포함된 일기들을 검색하는 코드
-    // 밑은 예시
-//            val diaryDatabase = DiaryDatabase.getInstance(context)
-//            diaryEntries = diaryDatabase.diaryDao().search(text)
+        scope.launch {
+            try {
+                viewModel.searchDiariesByKeyword(text).collect { results ->
+                    searchResults = results
+                    Log.d("Search", "Search results: $searchResults")
+                }
+            } catch (e: Exception) {
+                Log.e("Search", "Error during search", e)
+            }
+        }
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {Text(text ="Sweat Note", fontSize=30.sp, fontStyle = FontStyle.Italic)},
-                modifier = Modifier.clickable{
+                title = { Text(text = "Sweat Note", fontSize = 30.sp, fontFamily = dancingscript, fontWeight = FontWeight.SemiBold) },
+                modifier = Modifier.clickable {
                     navController.navigate(Routes.Main.route)
                 }
             )
         },
         content = {
             Column(
-                modifier = Modifier.fillMaxSize().padding(top = 40.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 40.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                var text by remember { mutableStateOf("") }
-
                 Spacer(modifier = Modifier.height(50.dp))
 
                 Text(
@@ -79,14 +82,12 @@ fun Search(navController: NavHostController) {
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-
                 OutlinedTextField(
                     value = text,
                     onValueChange = { text = it },
-                    keyboardActions = KeyboardActions(onDone = { handleSearchClick() }),
                     placeholder = { Text("키워드를 입력하세요") },
                     leadingIcon = {
-                        IconButton(onClick = {}) {
+                        IconButton(onClick = { handleSearchClick() }) {
                             Icon(
                                 Icons.Filled.Search,
                                 contentDescription = null,
@@ -103,29 +104,34 @@ fun Search(navController: NavHostController) {
                     singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth(0.8f)
-                        .background(Color(0xFFF5F5F5))
+                        .background(Color(0xFFF5F5F5)),
+                    keyboardActions = KeyboardActions(
+                        onDone = { handleSearchClick() }
+                    )
                 )
 
-                // 키워드가 포함된 일기 출력 코드(임시)
-                // 해당 일기 클릭 시 일기 화면으로 넘어가야함
-                //        LazyColumn {
-                //            items(diaryEntries) { diaryEntry ->
-                //                Text(
-                //                    diaryEntry.entry, // 각 일기 항목의 내용을 표시합니다.
-                //                    modifier = Modifier.clickable {
-                //                        // 일기 항목을 클릭하면 해당 일기로 이동합니다.
-                //                        navController.navigate("diary/${diaryEntry.id}")
-                //                    }
-                //                )
-                //            }
-                //        }
+                Spacer(modifier = Modifier.height(20.dp))
+
+                LazyColumn {
+                    items(searchResults) { diary ->
+                        Text(
+                            text = diary.content,
+                            modifier = Modifier.clickable {
+                                navController.navigate(Routes.Written.route + "/${diary.id}")
+                            }
+                        )
+                    }
+                }
             }
         },
         bottomBar = {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(8.dp).padding(bottom = 30.dp, start = 40.dp, end = 40.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .padding(bottom = 30.dp, start = 40.dp, end = 40.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
-            ){
+            ) {
                 BottomBarItem(
                     text = "일기",
                     iconResId = R.drawable.baseline_edit_calendar_24,
@@ -144,5 +150,4 @@ fun Search(navController: NavHostController) {
             }
         }
     )
-
 }

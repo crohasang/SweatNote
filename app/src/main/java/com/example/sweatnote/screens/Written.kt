@@ -1,7 +1,6 @@
 package com.example.sweatnote.screens
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,6 +33,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -56,21 +57,17 @@ fun Written(navController: NavHostController) {
 
     val viewModel: DiaryViewModel = viewModel()
 
-    val date = navController.currentBackStackEntry?.arguments?.getString("date") ?: ""
-    val diary = viewModel.getDiaryByDate(date).collectAsState(initial = null)
+    val date = remember { mutableStateOf("") }
+    val diary = viewModel.getDiaryByDate(date.value).collectAsState(initial = null)
 
     // 일기 삭제 여부 모달 상태
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
 
+    val dancingscript = FontFamily(Font(R.font.dancingscript_semibold, FontWeight.SemiBold, FontStyle.Italic))
 
     // 편집 버튼 클릭 시 실행되는 함수
     fun handleEditClick() {
-        try {
-            navController.navigate(Routes.Writing.createRoute(date))
-        } catch (e: Exception) {
-            Log.e("Written", "Error navigating to Writing page", e)
-            // 필요에 따라 사용자에게 오류 메시지를 표시할 수 있습니다.
-        }
+        // Writing 페이지로 이동하는데, 해당 날짜의 기록된 정보들이 반영되어 있어야 함
     }
 
     // 삭제 버튼 클릭 시 실행되는 함수
@@ -91,11 +88,12 @@ fun Written(navController: NavHostController) {
                 TextButton(
                     onClick = {
                         coroutineScope.launch {
-                            if(diary != null) {
-                                diary.value?.let { viewModel.delete(it) }
-                                navController.navigate(Routes.Main.route)
-                            }
+                            // 데이터베이스에서 일기를 삭제하는 코드
 
+                            // 예시
+//                            val diaryDatabase = DiaryDatabase.getInstance(context)
+//                            diaryDatabase.diaryDao().delete(/* diaryEntry */)
+                            navController.navigate(Routes.Main.route)
                         }
                     }
                 ) {
@@ -117,7 +115,7 @@ fun Written(navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {Text(text ="Sweat Note", fontSize=30.sp, fontStyle = FontStyle.Italic)},
+                title = {Text(text ="Sweat Note", fontSize=30.sp, fontFamily = dancingscript, fontWeight = FontWeight.SemiBold)},
                 modifier = Modifier.clickable{
                     navController.navigate(Routes.Main.route)
                 }
@@ -175,7 +173,7 @@ fun Written(navController: NavHostController) {
 
                 Text("수행한 운동", fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("${diary.value?.exercises?.joinToString(", ") ?: "운동 없음"}")
+                Text("수행한 운동: ${diary.value?.exercises?.joinToString(", ") ?: "운동 없음"}")
 
 
 
@@ -186,7 +184,7 @@ fun Written(navController: NavHostController) {
                 // 감정 체크박스
                 Text("감정을 선택하세요", fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("${diary.value?.emotion?.name ?: "감정 없음"}")
+                Text("감정 상태: ${diary.value?.emotion?.name ?: "감정 없음"}")
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -194,7 +192,7 @@ fun Written(navController: NavHostController) {
 
                 Text("작성된 일기", fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(20.dp))
-                Text("${diary.value?.content ?: "내용 없음"}")
+                Text("일기 내용: ${diary.value?.content ?: "내용 없음"}")
 
                 Spacer(modifier = Modifier.height(50.dp))
 
