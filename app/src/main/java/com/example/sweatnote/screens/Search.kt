@@ -54,8 +54,8 @@ fun Search(navController: NavHostController, viewModel: DiaryViewModel = viewMod
                 Log.e("Search", "Error during search", e)
             }
         }
-    }
 
+    }
     Scaffold(
         topBar = {
             TopAppBar(

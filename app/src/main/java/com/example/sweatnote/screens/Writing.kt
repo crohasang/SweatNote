@@ -82,7 +82,7 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel) {
         coroutineScope.launch {
             try {
                 val diary = Diary(
-                    date = "2024-05-28",  // 실제 날짜를 여기에 삽입
+                    date = "2024-05-28",
                     content = diaryEntry,
                     emotion = EmotionType.valueOf(selectedFeeling.toUpperCase()),
                     exercises = selectedWorkouts.map { ExerciseType.valueOf(it.toUpperCase()) },
