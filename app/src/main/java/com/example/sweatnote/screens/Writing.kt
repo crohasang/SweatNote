@@ -39,6 +39,8 @@ import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -73,6 +75,7 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel) {
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
     val keyboardController = LocalSoftwareKeyboardController.current
+    val dancingscript = FontFamily(Font(R.font.dancingscript_semibold, FontWeight.SemiBold, FontStyle.Italic))
 
     // 제출하기 버튼을 클릭했을 때 실행되는 함수
     fun handleSubmitClick() {
@@ -101,7 +104,7 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {Text(text ="Sweat Note", fontSize=30.sp, fontStyle = FontStyle.Italic)},
+                title = {Text(text ="Sweat Note", fontSize=30.sp, fontFamily = dancingscript, fontWeight = FontWeight.SemiBold)},
                 modifier = Modifier.clickable{
                     navController.navigate(Routes.Main.route)
                 }

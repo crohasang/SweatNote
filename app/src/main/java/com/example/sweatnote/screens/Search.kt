@@ -16,6 +16,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -38,6 +40,8 @@ fun Search(navController: NavHostController, viewModel: DiaryViewModel = viewMod
     var searchResults by remember { mutableStateOf<List<Diary>>(emptyList()) }
     val scope = rememberCoroutineScope()
 
+    val dancingscript = FontFamily(Font(R.font.dancingscript_semibold, FontWeight.SemiBold, FontStyle.Italic))
+
     // Log and error handling
     fun handleSearchClick() {
         scope.launch {
@@ -55,7 +59,7 @@ fun Search(navController: NavHostController, viewModel: DiaryViewModel = viewMod
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Sweat Note", fontSize = 30.sp, fontStyle = FontStyle.Italic) },
+                title = { Text(text = "Sweat Note", fontSize = 30.sp, fontFamily = dancingscript, fontWeight = FontWeight.SemiBold) },
                 modifier = Modifier.clickable {
                     navController.navigate(Routes.Main.route)
                 }
