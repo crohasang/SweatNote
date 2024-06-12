@@ -99,6 +99,7 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel) {
 
             try {
                 val diary = Diary(
+                    
                     date = date,
                     content = diaryEntry,
                     emotion = EmotionType.valueOf(selectedFeeling.toString()),
