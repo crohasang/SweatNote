@@ -47,8 +47,8 @@ fun Search(navController: NavHostController) {
 
     fun handleSearchClick() {
 
-    // 데이터베이스에서 키워드가 포함된 일기들을 검색하는 코드
-    // 밑은 예시
+        // 데이터베이스에서 키워드가 포함된 일기들을 검색하는 코드
+        // 밑은 예시
 //            val diaryDatabase = DiaryDatabase.getInstance(context)
 //            diaryEntries = diaryDatabase.diaryDao().search(text)
     }
