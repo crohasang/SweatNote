@@ -68,7 +68,7 @@ fun CalendarScreen(navController: NavHostController) {
                 AndroidView(factory = { CalendarView(it) }, update = {
                     it.setOnDateChangeListener { _, year, month, day ->
                         //date = "$day - ${month + 1} - $year"
-                        date = "$year-${month+1}-$day"
+                        date = "$year-${String.format("%02d", month + 1)}-${String.format("%02d", day)}"
                         coroutineScope.launch {
                             viewModel.getDiaryByDate(date).collect { diary ->
                                 if (diary != null) {
@@ -93,7 +93,6 @@ fun CalendarScreen(navController: NavHostController) {
                 Row(modifier = Modifier.fillMaxWidth().padding(top=10.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically){
-                    //Text(date)
                     if(flag){
                         Text("작성된 일기가 있습니다.", modifier = Modifier.padding(end = 20.dp), fontSize = 20.sp)
                         Button(onClick= { navController.navigate(Routes.Written.createRoute(date)) },
