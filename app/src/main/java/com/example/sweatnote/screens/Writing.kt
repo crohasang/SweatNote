@@ -27,6 +27,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,17 +60,32 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Writing(navController: NavHostController, viewModel: DiaryViewModel) {
+fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: String) {
     val workoutOptions = listOf("어깨", "가슴", "등", "하체", "유산소")
-    var selectedWorkouts by remember { mutableStateOf(listOf<String>()) }
+
 
     // 감정을 선택할 수 있는 버튼 추가
     val feelings = listOf("최악이에요", "별로에요", "보통이에요", "좋아요", "최고에요")
+
+
+    // navController에서 날짜를 가져옴
+    var diary by remember { mutableStateOf<Diary?>(null) }
+    var selectedWorkouts by remember { mutableStateOf(listOf<String>()) }
     var selectedFeeling by remember { mutableStateOf("") }
-
-
-    // 상세한 일기를 작성할 수 있는 TextField 추가
     var diaryEntry by remember { mutableStateOf("") }
+
+
+    LaunchedEffect(key1 = date) {
+        viewModel.getDiaryByDate(date).collect {
+            diary = it
+            // 일기가 존재하면 해당 일기의 운동, 감정, 내용을 가져옴(그렇지 않으면 기본값을 사용)
+            selectedWorkouts = diary?.exercises?.map { it.name } ?: listOf()
+            selectedFeeling = (diary?.emotion ?: "").toString()
+            diaryEntry = diary?.content ?: ""
+
+        }
+    }
+
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -82,11 +98,12 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel) {
         coroutineScope.launch {
             try {
                 val diary = Diary(
-                    date = "2024-05-28",
+                    date = date,
                     content = diaryEntry,
-                    emotion = EmotionType.valueOf(selectedFeeling.toUpperCase()),
-                    exercises = selectedWorkouts.map { ExerciseType.valueOf(it.toUpperCase()) },
-                    keywords = "키워드" // 필요에 따라 실제 키워드를 여기에 삽입
+                    emotion = EmotionType.valueOf(selectedFeeling.toString()),
+                    exercises = selectedWorkouts.map {ExerciseType.valueOf(it)},
+                    keywords = diaryEntry
+
                 )
                 Log.d("Writing", "Inserting diary entry: $diary")
                 viewModel.insert(diary)
