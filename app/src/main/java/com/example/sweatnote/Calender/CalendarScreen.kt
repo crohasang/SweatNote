@@ -93,7 +93,6 @@ fun CalendarScreen(navController: NavHostController) {
                 Row(modifier = Modifier.fillMaxWidth().padding(top=10.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically){
-                    Text(date)
                     if(flag){
                         Text("작성된 일기가 있습니다.", modifier = Modifier.padding(end = 20.dp), fontSize = 20.sp)
                         Button(onClick= { navController.navigate(Routes.Written.createRoute(date)) },
