@@ -83,7 +83,7 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel) {
                     content = diaryEntry,
                     emotion = EmotionType.valueOf(selectedFeeling.toUpperCase()),
                     exercises = selectedWorkouts.map { ExerciseType.valueOf(it.toUpperCase()) },
-                    keywords = "키워드" // 필요에 따라 실제 키워드를 여기에 삽입
+                    keywords = diaryEntry // 필요에 따라 실제 키워드를 여기에 삽입
                 )
                 Log.d("Writing", "Inserting diary entry: $diary")
                 viewModel.insert(diary)
