@@ -1,6 +1,7 @@
 package com.example.sweatnote.screens
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -50,15 +51,15 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Written(navController: NavHostController) {
+fun Written(navController: NavHostController, viewModel: DiaryViewModel, date: String) {
     val scrollState = rememberScrollState()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
     val viewModel: DiaryViewModel = viewModel()
 
-    val date = remember { mutableStateOf("") }
-    val diary = viewModel.getDiaryByDate(date.value).collectAsState(initial = null)
+    val date = navController.currentBackStackEntry?.arguments?.getString("date") ?: ""
+    val diary = viewModel.getDiaryByDate(date).collectAsState(initial = null)
 
     // 일기 삭제 여부 모달 상태
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
@@ -67,7 +68,12 @@ fun Written(navController: NavHostController) {
 
     // 편집 버튼 클릭 시 실행되는 함수
     fun handleEditClick() {
-        // Writing 페이지로 이동하는데, 해당 날짜의 기록된 정보들이 반영되어 있어야 함
+        try {
+            navController.navigate(Routes.Writing.createRoute(date))
+        } catch (e: Exception) {
+            Log.e("Written", "Error navigating to Writing page", e)
+            // 필요에 따라 사용자에게 오류 메시지를 표시할 수 있습니다.
+        }
     }
 
     // 삭제 버튼 클릭 시 실행되는 함수
@@ -88,12 +94,10 @@ fun Written(navController: NavHostController) {
                 TextButton(
                     onClick = {
                         coroutineScope.launch {
-                            // 데이터베이스에서 일기를 삭제하는 코드
-
-                            // 예시
-//                            val diaryDatabase = DiaryDatabase.getInstance(context)
-//                            diaryDatabase.diaryDao().delete(/* diaryEntry */)
-                            navController.navigate(Routes.Main.route)
+                            if(diary != null) {
+                                diary.value?.let { viewModel.delete(it) }
+                                navController.navigate(Routes.Main.route)
+                            }
                         }
                     }
                 ) {
@@ -173,7 +177,7 @@ fun Written(navController: NavHostController) {
 
                 Text("수행한 운동", fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("수행한 운동: ${diary.value?.exercises?.joinToString(", ") ?: "운동 없음"}")
+                Text("${diary.value?.exercises?.joinToString(", ") ?: "운동 없음"}")
 
 
 
@@ -184,7 +188,7 @@ fun Written(navController: NavHostController) {
                 // 감정 체크박스
                 Text("감정을 선택하세요", fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("감정 상태: ${diary.value?.emotion?.name ?: "감정 없음"}")
+                Text("${diary.value?.emotion?.name ?: "감정 없음"}")
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -192,7 +196,7 @@ fun Written(navController: NavHostController) {
 
                 Text("작성된 일기", fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(20.dp))
-                Text("일기 내용: ${diary.value?.content ?: "내용 없음"}")
+                Text("${diary.value?.content ?: "내용 없음"}")
 
                 Spacer(modifier = Modifier.height(50.dp))
 

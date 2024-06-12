@@ -4,19 +4,28 @@ import android.annotation.SuppressLint
 import android.widget.CalendarView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -27,24 +36,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.sweatnote.R
+import com.example.sweatnote.components.main.DateButtonRow
 import com.example.sweatnote.example.DiaryViewModel
 import com.example.sweatnote.navigation.Routes
+import com.example.sweatnote.roomDB.Diary
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.util.Calendar
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun CalendarScreen(navController: NavHostController) {
     var date by remember { mutableStateOf(LocalDate.now().toString()) }
+
     var flag by remember { mutableStateOf(false)}
     val coroutineScope = rememberCoroutineScope()
     val viewModel: DiaryViewModel = viewModel()
@@ -66,23 +76,25 @@ fun CalendarScreen(navController: NavHostController) {
                 modifier = Modifier.fillMaxSize()
             ) {
                 AndroidView(factory = { CalendarView(it) }, update = {
-                    it.setOnDateChangeListener { _, year, month, day ->
-                        //date = "$day - ${month + 1} - $year"
+                    it.setOnDateChangeListener { calendarView, year, month, day ->
+//                        date = "$day - ${month + 1} - $year"
+
                         date = "$year-${String.format("%02d", month + 1)}-${String.format("%02d", day)}"
                         coroutineScope.launch {
-                            viewModel.getDiaryByDate(date).collect { diary ->
+                            viewModel.getDiaryByDate(date).collect { diary: Diary? ->
                                 if (diary != null) {
                                     flag = true
-                                    //navController.navigate(Routes.Written.createRoute(date))
                                 } else {
                                     flag = false
-                                    //navController.navigate(Routes.Writing.createRoute(date))
+
                                 }
                             }
                         }
                     }
-                    it.maxDate=Calendar.getInstance().timeInMillis
-                    it.setDate(dateFormat.parse(date)?.time ?:0)
+                    it.dateTextAppearance
+
+//                    it.maxDate=Calendar.getInstance().timeInMillis
+//                    it.setDate(dateFormat.parse(date)?.time ?:0)
                 })
                 Divider(
                     modifier = Modifier
@@ -90,27 +102,10 @@ fun CalendarScreen(navController: NavHostController) {
                         .height(1.dp),
                     color = Color.Gray
                 )
-                Row(modifier = Modifier.fillMaxWidth().padding(top=10.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically){
-                    if(flag){
-                        Text("작성된 일기가 있습니다.", modifier = Modifier.padding(end = 20.dp), fontSize = 20.sp)
-                        Button(onClick= { navController.navigate(Routes.Written.createRoute(date)) },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(
-                                ContextCompat.getColor(LocalContext.current, R.color.teal_700)),
-                                contentColor = Color.White)){
-                            Text("조회")
-                        }
-                    }else{
-                        Text("작성된 일기가 없습니다.", modifier = Modifier.padding(end = 20.dp), fontSize = 20.sp)
-                        Button(onClick={ navController.navigate(Routes.Writing.createRoute(date)) },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(
-                                ContextCompat.getColor(LocalContext.current, R.color.teal_700)),
-                                contentColor = Color.White)){
-                            Text("작성")
-                        }
-                    }
-                }
+
+                println("flag in Calendar: " + flag)
+                println("date in Calendar: " + date)
+                DateButtonRow(flag, date, navController)
             }
         },
         bottomBar = {
