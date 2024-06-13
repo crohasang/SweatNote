@@ -1,13 +1,12 @@
 package com.example.sweatnote.screens
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.clickable
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -23,7 +22,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -33,16 +31,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.sweatnote.Calender.BottomBarItem
-import com.example.sweatnote.R
+import com.example.sweatnote.components.BottomBar
+import com.example.sweatnote.components.TopBar
 import com.example.sweatnote.example.DiaryViewModel
 import com.example.sweatnote.navigation.Routes
 import kotlinx.coroutines.launch
@@ -50,24 +45,26 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Written(navController: NavHostController) {
+fun Written(navController: NavHostController, viewModel: DiaryViewModel, date: String) {
     val scrollState = rememberScrollState()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
     val viewModel: DiaryViewModel = viewModel()
 
-    val date = remember { mutableStateOf("") }
-    val diary = viewModel.getDiaryByDate(date.value).collectAsState(initial = null)
+    val date = navController.currentBackStackEntry?.arguments?.getString("date") ?: ""
+    val diary = viewModel.getDiaryByDate(date).collectAsState(initial = null)
 
     // 일기 삭제 여부 모달 상태
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
 
-    val dancingscript = FontFamily(Font(R.font.dancingscript_semibold, FontWeight.SemiBold, FontStyle.Italic))
-
     // 편집 버튼 클릭 시 실행되는 함수
     fun handleEditClick() {
-        // Writing 페이지로 이동하는데, 해당 날짜의 기록된 정보들이 반영되어 있어야 함
+        try {
+            navController.navigate(Routes.Writing.createRoute(date))
+        } catch (e: Exception) {
+            Log.e("Written", "Error navigating to Writing page", e)
+        }
     }
 
     // 삭제 버튼 클릭 시 실행되는 함수
@@ -88,12 +85,10 @@ fun Written(navController: NavHostController) {
                 TextButton(
                     onClick = {
                         coroutineScope.launch {
-                            // 데이터베이스에서 일기를 삭제하는 코드
-
-                            // 예시
-//                            val diaryDatabase = DiaryDatabase.getInstance(context)
-//                            diaryDatabase.diaryDao().delete(/* diaryEntry */)
-                            navController.navigate(Routes.Main.route)
+                            if(diary != null) {
+                                diary.value?.let { viewModel.delete(it) }
+                                navController.navigate(Routes.Main.route)
+                            }
                         }
                     }
                 ) {
@@ -113,14 +108,7 @@ fun Written(navController: NavHostController) {
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {Text(text ="Sweat Note", fontSize=30.sp, fontFamily = dancingscript, fontWeight = FontWeight.SemiBold)},
-                modifier = Modifier.clickable{
-                    navController.navigate(Routes.Main.route)
-                }
-            )
-        },
+        topBar = { TopBar(navController) },
         content = {
             Column(
                 modifier = Modifier
@@ -173,7 +161,7 @@ fun Written(navController: NavHostController) {
 
                 Text("수행한 운동", fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("수행한 운동: ${diary.value?.exercises?.joinToString(", ") ?: "운동 없음"}")
+                Text("${diary.value?.exercises?.joinToString(", ") ?: "운동 없음"}")
 
 
 
@@ -184,7 +172,7 @@ fun Written(navController: NavHostController) {
                 // 감정 체크박스
                 Text("감정을 선택하세요", fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("감정 상태: ${diary.value?.emotion?.name ?: "감정 없음"}")
+                Text("${diary.value?.emotion?.name ?: "감정 없음"}")
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -192,36 +180,14 @@ fun Written(navController: NavHostController) {
 
                 Text("작성된 일기", fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(20.dp))
-                Text("일기 내용: ${diary.value?.content ?: "내용 없음"}")
+                Text("${diary.value?.content ?: "내용 없음"}")
 
                 Spacer(modifier = Modifier.height(50.dp))
 
             }
         },
         bottomBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .padding(bottom = 30.dp, start = 40.dp, end = 40.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ){
-                BottomBarItem(
-                    text = "일기",
-                    iconResId = R.drawable.baseline_edit_calendar_24,
-                    onClick = { navController.navigate(Routes.Written.route) }
-                )
-                BottomBarItem(
-                    text = "통계",
-                    iconResId = R.drawable.baseline_insert_chart_outlined_24,
-                    onClick = { navController.navigate(Routes.Statistics.route) }
-                )
-                BottomBarItem(
-                    text = "검색",
-                    iconResId = R.drawable.baseline_manage_search_24,
-                    onClick = { navController.navigate(Routes.Search.route) }
-                )
-            }
+            BottomBar(navController = navController)
         }
     )
 }

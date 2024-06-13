@@ -22,20 +22,20 @@ fun DiaryTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    lineCount: Int = 40 // 라인 수를 늘렸습니다.
+    lineCount: Int = 40
 ) {
-    val lineHeight = 30 // 줄 간격을 늘렸습니다.
+    val lineHeight = 30
     val textFieldHeight = lineHeight * lineCount
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    Box(modifier.height(textFieldHeight.dp)) { // 높이를 크게 설정했습니다.
+    Box(modifier.height(textFieldHeight.dp)) {
         BasicTextField(
             value = value,
             onValueChange = onValueChange,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(textFieldHeight.dp)
-                .background(Color.White), // 밝은 배경색으로 변경했습니다.
+                .background(Color.White),
             textStyle = MaterialTheme.typography.bodyLarge.copy(
                 color = Color.Black,
                 background = Color.Transparent
@@ -43,7 +43,7 @@ fun DiaryTextField(
             cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
             singleLine = false,
             maxLines = lineCount,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done), // '완료' 액션을 추가합니다.
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done), // '완료' 액션 추가
             keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }) // '완료'를 누르면 키보드 숭김
         )
 

@@ -8,7 +8,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,8 +24,8 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,15 +38,12 @@ import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.sweatnote.Calender.BottomBarItem
-import com.example.sweatnote.R
+import com.example.sweatnote.components.BottomBar
+import com.example.sweatnote.components.TopBar
 import com.example.sweatnote.components.writing.CheckboxWithText
 import com.example.sweatnote.example.DiaryViewModel
 import com.example.sweatnote.navigation.Routes
@@ -59,34 +55,48 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Writing(navController: NavHostController, viewModel: DiaryViewModel) {
+fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: String) {
     val workoutOptions = listOf("어깨", "가슴", "등", "하체", "유산소")
-    var selectedWorkouts by remember { mutableStateOf(listOf<String>()) }
+
 
     // 감정을 선택할 수 있는 버튼 추가
     val feelings = listOf("최악이에요", "별로에요", "보통이에요", "좋아요", "최고에요")
+
+
+    // navController에서 날짜를 가져옴
+    var diary by remember { mutableStateOf<Diary?>(null) }
+    var selectedWorkouts by remember { mutableStateOf(listOf<String>()) }
     var selectedFeeling by remember { mutableStateOf("") }
-
-
-    // 상세한 일기를 작성할 수 있는 TextField 추가
     var diaryEntry by remember { mutableStateOf("") }
+
+
+    LaunchedEffect(key1 = date) {
+        viewModel.getDiaryByDate(date).collect {
+            diary = it
+            // 일기가 존재하면 해당 일기의 운동, 감정, 내용을 가져옴(그렇지 않으면 기본값을 사용)
+            selectedWorkouts = diary?.exercises?.map { it.name } ?: listOf()
+            selectedFeeling = (diary?.emotion ?: "").toString()
+            diaryEntry = diary?.content ?: ""
+
+        }
+    }
+
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
     val keyboardController = LocalSoftwareKeyboardController.current
-    val dancingscript = FontFamily(Font(R.font.dancingscript_semibold, FontWeight.SemiBold, FontStyle.Italic))
 
     // 제출하기 버튼을 클릭했을 때 실행되는 함수
     fun handleSubmitClick() {
         coroutineScope.launch {
             try {
                 val diary = Diary(
-                    date = "2024-05-28",  // 실제 날짜를 여기에 삽입
+                    date = date,
                     content = diaryEntry,
-                    emotion = EmotionType.valueOf(selectedFeeling.toUpperCase()),
-                    exercises = selectedWorkouts.map { ExerciseType.valueOf(it.toUpperCase()) },
-                    keywords = diaryEntry // 필요에 따라 실제 키워드를 여기에 삽입
+                    emotion = EmotionType.valueOf(selectedFeeling.toString()),
+                    exercises = selectedWorkouts.map {ExerciseType.valueOf(it)},
+                    keywords = diaryEntry
                 )
                 Log.d("Writing", "Inserting diary entry: $diary")
                 viewModel.insert(diary)
@@ -102,14 +112,7 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel) {
 
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {Text(text ="Sweat Note", fontSize=30.sp, fontFamily = dancingscript, fontWeight = FontWeight.SemiBold)},
-                modifier = Modifier.clickable{
-                    navController.navigate(Routes.Main.route)
-                }
-            )
-        },
+        topBar = { TopBar(navController) },
         content = {
             Column(
                 modifier = Modifier
@@ -223,29 +226,7 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel) {
             }
         },
         bottomBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .padding(bottom = 30.dp, start = 40.dp, end = 40.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ){
-                BottomBarItem(
-                    text = "일기",
-                    iconResId = R.drawable.baseline_edit_calendar_24,
-                    onClick = { navController.navigate(Routes.Written.route) }
-                )
-                BottomBarItem(
-                    text = "통계",
-                    iconResId = R.drawable.baseline_insert_chart_outlined_24,
-                    onClick = { navController.navigate(Routes.Statistics.route) }
-                )
-                BottomBarItem(
-                    text = "검색",
-                    iconResId = R.drawable.baseline_manage_search_24,
-                    onClick = { navController.navigate(Routes.Search.route) }
-                )
-            }
+            BottomBar(navController = navController)
         }
     )
 }
