@@ -58,10 +58,8 @@ import kotlinx.coroutines.launch
 fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: String) {
     val workoutOptions = listOf("어깨", "가슴", "등", "하체", "유산소")
 
-
     // 감정을 선택할 수 있는 버튼 추가
     val feelings = listOf("최악이에요", "별로에요", "보통이에요", "좋아요", "최고에요")
-
 
     // navController에서 날짜를 가져옴
     var diary by remember { mutableStateOf<Diary?>(null) }
@@ -69,18 +67,15 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: S
     var selectedFeeling by remember { mutableStateOf("") }
     var diaryEntry by remember { mutableStateOf("") }
 
-
     LaunchedEffect(key1 = date) {
-        viewModel.getDiaryByDate(date).collect {
+        viewModel.getDiaryByDate(date).collect { it ->
             diary = it
             // 일기가 존재하면 해당 일기의 운동, 감정, 내용을 가져옴(그렇지 않으면 기본값을 사용)
             selectedWorkouts = diary?.exercises?.map { it.name } ?: listOf()
-            selectedFeeling = (diary?.emotion ?: "").toString()
+            selectedFeeling = diary?.emotion?.name ?: ""
             diaryEntry = diary?.content ?: ""
-
         }
     }
-
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -91,26 +86,30 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: S
     fun handleSubmitClick() {
         coroutineScope.launch {
             try {
-                val diary = Diary(
+                val newDiary = Diary(
+                    id = diary?.id ?: 0, // 기존 일기의 ID를 유지하여 업데이트를 수행합니다.
                     date = date,
                     content = diaryEntry,
-                    emotion = EmotionType.valueOf(selectedFeeling.toString()),
-                    exercises = selectedWorkouts.map {ExerciseType.valueOf(it)},
+                    emotion = EmotionType.valueOf(selectedFeeling.uppercase()),
+                    exercises = selectedWorkouts.map { ExerciseType.valueOf(it.uppercase()) },
                     keywords = diaryEntry
-
                 )
-                Log.d("Writing", "Inserting diary entry: $diary")
-                viewModel.insert(diary)
-                Log.d("Writing", "Diary entry inserted successfully")
-                Toast.makeText(context, "Diary entry inserted", Toast.LENGTH_SHORT).show()
+                if (diary == null) {
+                    // 일기가 존재하지 않으면 삽입
+                    viewModel.insert(newDiary)
+                    Toast.makeText(context, "일기가 삽입되었습니다.", Toast.LENGTH_SHORT).show()
+                } else {
+                    // 일기가 존재하면 업데이트
+                    viewModel.update(newDiary)
+                    Toast.makeText(context, "일기가 업데이트되었습니다.", Toast.LENGTH_SHORT).show()
+                }
                 navController.navigate(Routes.Main.route)
             } catch (e: Exception) {
-                Log.e("Writing", "Error inserting diary entry", e)
-                Toast.makeText(context, "Error inserting diary entry", Toast.LENGTH_SHORT).show()
+                Log.e("Writing", "일기 삽입/업데이트 오류", e)
+                Toast.makeText(context, "일기 삽입/업데이트 오류", Toast.LENGTH_SHORT).show()
             }
         }
     }
-
 
     Scaffold(
         topBar = { TopBar(navController) },
@@ -125,8 +124,7 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: S
                         interactionSource = remember { MutableInteractionSource() }) { keyboardController?.hide() },
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start,
-
-                ) {
+            ) {
                 Spacer(modifier = Modifier.height(50.dp))
 
                 Text(
@@ -223,7 +221,6 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: S
                         ) // 글자 색깔을 검은색으로, 글자를 굵게 설정합니다.
                     }
                 }
-
             }
         },
         bottomBar = {
