@@ -4,15 +4,11 @@ import BarChartView
 import android.annotation.SuppressLint
 import android.app.Application
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -21,7 +17,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
@@ -33,8 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.sweatnote.Calender.BottomBarItem
 import com.example.sweatnote.R
+import com.example.sweatnote.components.BottomBar
 import com.example.sweatnote.example.DiaryViewModel
 import com.example.sweatnote.navigation.Routes
 
@@ -82,29 +77,7 @@ fun StatsScreen(navController: NavHostController, viewModel: DiaryViewModel) {
             }
         },
         bottomBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .padding(bottom = 30.dp, start = 40.dp, end = 40.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                BottomBarItem(
-                    text = "일기",
-                    iconResId = R.drawable.baseline_edit_calendar_24,
-                    onClick = { navController.navigate(Routes.Written.route) }
-                )
-                BottomBarItem(
-                    text = "통계",
-                    iconResId = R.drawable.baseline_insert_chart_outlined_24,
-                    onClick = { navController.navigate(Routes.Statistics.route) }
-                )
-                BottomBarItem(
-                    text = "검색",
-                    iconResId = R.drawable.baseline_manage_search_24,
-                    onClick = { navController.navigate(Routes.Search.route) }
-                )
-            }
+            BottomBar(navController = navController)
         }
     )
 }

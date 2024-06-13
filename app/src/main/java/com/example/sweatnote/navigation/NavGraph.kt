@@ -28,12 +28,12 @@ fun NavGraph(navController: NavHostController, diaryViewModel: DiaryViewModel) {
             val diaryViewModel: DiaryViewModel = viewModel()
             StatsScreen(navController = navController, viewModel = diaryViewModel)
         }
-        composable(Routes.Writing.route + "/{date}") { backStackEntry ->
+        composable(route = Routes.Writing.route) { backStackEntry ->
             val date = backStackEntry.arguments?.getString("date") ?: ""
             Writing(navController, diaryViewModel, date)
         }
 
-        composable(Routes.Written.route + "/{date}") { backStackEntry ->
+        composable(route = Routes.Written.route) { backStackEntry ->
             val date = backStackEntry.arguments?.getString("date") ?: ""
             Written(navController, diaryViewModel, date)
         }
