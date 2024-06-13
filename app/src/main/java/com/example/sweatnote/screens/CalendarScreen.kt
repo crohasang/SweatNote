@@ -1,4 +1,4 @@
-package com.example.sweatnote.Calender
+package com.example.sweatnote.screens
 
 import android.annotation.SuppressLint
 import android.widget.CalendarView
@@ -69,8 +69,6 @@ fun CalendarScreen(navController: NavHostController) {
             ) {
                 AndroidView(factory = { CalendarView(it) }, update = {
                     it.setOnDateChangeListener { _, year, month, day ->
-//                        date = "$day - ${month + 1} - $year"
-//                        date = "$year-${String.format("%02d", month + 1)}-${String.format("%02d", day)}"
                         date = "$year${String.format("%02d", month + 1)}${String.format("%02d", day)}"
                         coroutineScope.launch {
                             viewModel.getDiaryByDate(date).collect { diary: Diary? ->
@@ -95,8 +93,8 @@ fun CalendarScreen(navController: NavHostController) {
                     color = Color.Gray
                 )
 
-                println("flag in Calendar: " + flag)
-                println("date in Calendar: " + date)
+//                println("flag in Calendar: " + flag)
+//                println("date in Calendar: " + date)
                 DateButtonRow(flag, date, navController)
             }
         },

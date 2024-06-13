@@ -1,9 +1,8 @@
-package com.example.sweatnote.graphViews
+package com.example.sweatnote.screens
 
 import BarChartView
 import android.annotation.SuppressLint
 import android.app.Application
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,25 +12,20 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.sweatnote.R
 import com.example.sweatnote.components.BottomBar
+import com.example.sweatnote.components.TopBar
 import com.example.sweatnote.example.DiaryViewModel
-import com.example.sweatnote.navigation.Routes
+import com.example.sweatnote.graphViews.PieChartView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -40,17 +34,8 @@ fun StatsScreen(navController: NavHostController, viewModel: DiaryViewModel) {
     val exerciseCounts by viewModel.exerciseCounts.collectAsState()
     val emotionCounts by viewModel.emotionCounts.collectAsState()
 
-    val dancingscript = FontFamily(Font(R.font.dancingscript_semibold, FontWeight.SemiBold, FontStyle.Italic))
-
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = "Sweat Note", fontSize = 30.sp, fontFamily = dancingscript, fontWeight = FontWeight.SemiBold) },
-                modifier = Modifier.clickable {
-                    navController.navigate(Routes.Main.route)
-                }
-            )
-        },
+        topBar = { TopBar(navController) },
         content = {
             Column(
                 modifier = Modifier

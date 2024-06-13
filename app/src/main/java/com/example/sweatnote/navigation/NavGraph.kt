@@ -5,9 +5,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.sweatnote.Calender.CalendarScreen
+import com.example.sweatnote.screens.CalendarScreen
 import com.example.sweatnote.example.DiaryViewModel
-import com.example.sweatnote.graphViews.StatsScreen
+import com.example.sweatnote.screens.StatsScreen
 import com.example.sweatnote.screens.Search
 import com.example.sweatnote.screens.Writing
 import com.example.sweatnote.screens.Written
