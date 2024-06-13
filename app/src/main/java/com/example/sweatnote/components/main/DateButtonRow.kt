@@ -1,6 +1,6 @@
 package com.example.sweatnote.components.main
 
-import android.net.Uri
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -21,17 +21,18 @@ import androidx.navigation.NavHostController
 import com.example.sweatnote.R
 import com.example.sweatnote.navigation.Routes
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun DateButtonRow(flag: Boolean, date: String, navController: NavHostController) {
     println("date : " + date)
-    val encodedDate = Uri.encode(date)
+
         Row(modifier = Modifier.fillMaxWidth().padding(top=10.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically){
             if(flag){
                 Text("작성된 일기가 있습니다.", modifier = Modifier.padding(end = 20.dp), fontSize = 20.sp)
                 Button(onClick= { try {
-                    navController.navigate(Routes.Written.createRoute(encodedDate))
+                    navController.navigate(Routes.Written.createRoute(date))
                 } catch (e: Exception) {
                     Log.e("Written", "Error during going written", e)
                 } },
@@ -43,7 +44,7 @@ fun DateButtonRow(flag: Boolean, date: String, navController: NavHostController)
             }else{
                 Text("작성된 일기가 없습니다.", modifier = Modifier.padding(end = 20.dp), fontSize = 20.sp)
                 Button(onClick={ try {
-                    navController.navigate(Routes.Writing.createRoute(encodedDate))
+                    navController.navigate(Routes.Writing.createRoute(date))
                 } catch (e: Exception) {
                     Log.e("Writing", "Error during going writing", e)
                 } },

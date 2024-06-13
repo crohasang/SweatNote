@@ -2,16 +2,12 @@ package com.example.sweatnote.Calender
 
 import android.annotation.SuppressLint
 import android.widget.CalendarView
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,12 +22,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,26 +34,24 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.sweatnote.R
+import com.example.sweatnote.components.BottomBar
 import com.example.sweatnote.components.main.DateButtonRow
 import com.example.sweatnote.example.DiaryViewModel
-import com.example.sweatnote.navigation.Routes
 import com.example.sweatnote.roomDB.Diary
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.util.Locale
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun CalendarScreen(navController: NavHostController) {
-    var date by remember { mutableStateOf(LocalDate.now().toString()) }
+    var date by remember { mutableStateOf(LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)) }
 
     var flag by remember { mutableStateOf(false)}
     val coroutineScope = rememberCoroutineScope()
     val viewModel: DiaryViewModel = viewModel()
 
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     val dancingscript = FontFamily(Font(R.font.dancingscript_semibold, FontWeight.SemiBold, FontStyle.Italic))
 
     Scaffold(
@@ -76,10 +68,10 @@ fun CalendarScreen(navController: NavHostController) {
                 modifier = Modifier.fillMaxSize()
             ) {
                 AndroidView(factory = { CalendarView(it) }, update = {
-                    it.setOnDateChangeListener { calendarView, year, month, day ->
+                    it.setOnDateChangeListener { _, year, month, day ->
 //                        date = "$day - ${month + 1} - $year"
-
-                        date = "$year-${String.format("%02d", month + 1)}-${String.format("%02d", day)}"
+//                        date = "$year-${String.format("%02d", month + 1)}-${String.format("%02d", day)}"
+                        date = "$year${String.format("%02d", month + 1)}${String.format("%02d", day)}"
                         coroutineScope.launch {
                             viewModel.getDiaryByDate(date).collect { diary: Diary? ->
                                 if (diary != null) {
@@ -108,54 +100,9 @@ fun CalendarScreen(navController: NavHostController) {
                 DateButtonRow(flag, date, navController)
             }
         },
-        bottomBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .padding(bottom = 30.dp, start = 40.dp, end = 40.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ){
-                BottomBarItem(
-                    text = "일기",
-                    iconResId = R.drawable.baseline_edit_calendar_24,
-                    onClick = { navController.navigate(Routes.Written.route) }
-                )
-                BottomBarItem(
-                    text = "통계",
-                    iconResId = R.drawable.baseline_insert_chart_outlined_24,
-                    onClick = { navController.navigate(Routes.Statistics.route) }
-                )
-                BottomBarItem(
-                    text = "검색",
-                    iconResId = R.drawable.baseline_manage_search_24,
-                    onClick = { navController.navigate(Routes.Search.route) }
-                )
-            }
-        }
+        bottomBar = { BottomBar(navController = navController) }
     )
 
-}
-@Composable
-fun BottomBarItem(text: String, iconResId: Int, onClick: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .clickable(onClick = onClick),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(id = iconResId),
-            contentDescription = null,
-            modifier = Modifier.size(40.dp)
-        )
-        Text(
-            text = text,
-            textAlign = TextAlign.Center,
-            fontSize = 25.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
-    }
 }
 @Preview
 @Composable

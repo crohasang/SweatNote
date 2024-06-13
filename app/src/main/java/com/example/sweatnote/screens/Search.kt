@@ -4,15 +4,33 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,12 +42,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.sweatnote.Calender.BottomBarItem
 import com.example.sweatnote.R
+import com.example.sweatnote.components.BottomBar
 import com.example.sweatnote.example.DiaryViewModel
 import com.example.sweatnote.navigation.Routes
 import com.example.sweatnote.roomDB.Diary
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -125,29 +142,7 @@ fun Search(navController: NavHostController, viewModel: DiaryViewModel = viewMod
             }
         },
         bottomBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .padding(bottom = 30.dp, start = 40.dp, end = 40.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                BottomBarItem(
-                    text = "일기",
-                    iconResId = R.drawable.baseline_edit_calendar_24,
-                    onClick = { navController.navigate(Routes.Written.route) }
-                )
-                BottomBarItem(
-                    text = "통계",
-                    iconResId = R.drawable.baseline_insert_chart_outlined_24,
-                    onClick = { navController.navigate(Routes.Statistics.route) }
-                )
-                BottomBarItem(
-                    text = "검색",
-                    iconResId = R.drawable.baseline_manage_search_24,
-                    onClick = { navController.navigate(Routes.Search.route) }
-                )
-            }
+            BottomBar(navController = navController)
         }
     )
 }
