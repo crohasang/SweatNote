@@ -3,7 +3,6 @@ package com.example.sweatnote.screens
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,7 +23,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,18 +32,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.sweatnote.R
 import com.example.sweatnote.components.BottomBar
+import com.example.sweatnote.components.TopBar
+import com.example.sweatnote.components.search.DiaryItem
 import com.example.sweatnote.example.DiaryViewModel
-import com.example.sweatnote.navigation.Routes
 import com.example.sweatnote.roomDB.Diary
 import kotlinx.coroutines.launch
 
@@ -55,16 +50,16 @@ import kotlinx.coroutines.launch
 fun Search(navController: NavHostController, viewModel: DiaryViewModel = viewModel()) {
     var text by remember { mutableStateOf("") }
     var searchResults by remember { mutableStateOf<List<Diary>>(emptyList()) }
+    var searchPerformed by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
-    val dancingscript = FontFamily(Font(R.font.dancingscript_semibold, FontWeight.SemiBold, FontStyle.Italic))
 
-    // Log and error handling
     fun handleSearchClick() {
         scope.launch {
             try {
                 viewModel.searchDiariesByKeyword(text).collect { results ->
                     searchResults = results
+                    searchPerformed = true
                     Log.d("Search", "Search results: $searchResults")
                 }
             } catch (e: Exception) {
@@ -74,14 +69,7 @@ fun Search(navController: NavHostController, viewModel: DiaryViewModel = viewMod
 
     }
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = "Sweat Note", fontSize = 30.sp, fontFamily = dancingscript, fontWeight = FontWeight.SemiBold) },
-                modifier = Modifier.clickable {
-                    navController.navigate(Routes.Main.route)
-                }
-            )
-        },
+        topBar = { TopBar(navController) },
         content = {
             Column(
                 modifier = Modifier
@@ -129,14 +117,13 @@ fun Search(navController: NavHostController, viewModel: DiaryViewModel = viewMod
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                LazyColumn {
-                    items(searchResults) { diary ->
-                        Text(
-                            text = diary.content,
-                            modifier = Modifier.clickable {
-                                navController.navigate(Routes.Written.route + "/${diary.id}")
-                            }
-                        )
+                if (searchPerformed && searchResults.isEmpty()) {
+                    Text("검색된 결과가 없습니다", modifier = Modifier.padding(16.dp))
+                } else {
+                    LazyColumn {
+                        items(searchResults) { diary ->
+                            DiaryItem(diary = diary, navController = navController)
+                        }
                     }
                 }
             }

@@ -24,7 +24,6 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,15 +38,12 @@ import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.sweatnote.R
 import com.example.sweatnote.components.BottomBar
+import com.example.sweatnote.components.TopBar
 import com.example.sweatnote.components.writing.CheckboxWithText
 import com.example.sweatnote.example.DiaryViewModel
 import com.example.sweatnote.navigation.Routes
@@ -90,7 +86,6 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: S
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
     val keyboardController = LocalSoftwareKeyboardController.current
-    val dancingscript = FontFamily(Font(R.font.dancingscript_semibold, FontWeight.SemiBold, FontStyle.Italic))
 
     // 제출하기 버튼을 클릭했을 때 실행되는 함수
     fun handleSubmitClick() {
@@ -118,14 +113,7 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: S
 
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {Text(text ="Sweat Note", fontSize=30.sp, fontFamily = dancingscript, fontWeight = FontWeight.SemiBold)},
-                modifier = Modifier.clickable{
-                    navController.navigate(Routes.Main.route)
-                }
-            )
-        },
+        topBar = { TopBar(navController) },
         content = {
             Column(
                 modifier = Modifier

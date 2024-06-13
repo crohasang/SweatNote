@@ -2,7 +2,6 @@ package com.example.sweatnote.screens
 
 import android.annotation.SuppressLint
 import android.util.Log
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,7 +22,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -33,16 +31,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.sweatnote.R
 import com.example.sweatnote.components.BottomBar
+import com.example.sweatnote.components.TopBar
 import com.example.sweatnote.example.DiaryViewModel
 import com.example.sweatnote.navigation.Routes
 import kotlinx.coroutines.launch
@@ -63,15 +58,12 @@ fun Written(navController: NavHostController, viewModel: DiaryViewModel, date: S
     // 일기 삭제 여부 모달 상태
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
 
-    val dancingscript = FontFamily(Font(R.font.dancingscript_semibold, FontWeight.SemiBold, FontStyle.Italic))
-
     // 편집 버튼 클릭 시 실행되는 함수
     fun handleEditClick() {
         try {
             navController.navigate(Routes.Writing.createRoute(date))
         } catch (e: Exception) {
             Log.e("Written", "Error navigating to Writing page", e)
-            // 필요에 따라 사용자에게 오류 메시지를 표시할 수 있습니다.
         }
     }
 
@@ -116,14 +108,7 @@ fun Written(navController: NavHostController, viewModel: DiaryViewModel, date: S
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {Text(text ="Sweat Note", fontSize=30.sp, fontFamily = dancingscript, fontWeight = FontWeight.SemiBold)},
-                modifier = Modifier.clickable{
-                    navController.navigate(Routes.Main.route)
-                }
-            )
-        },
+        topBar = { TopBar(navController) },
         content = {
             Column(
                 modifier = Modifier
