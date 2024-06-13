@@ -30,7 +30,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,12 +46,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun Written(navController: NavHostController, viewModel: DiaryViewModel, date: String) {
     val scrollState = rememberScrollState()
-    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
-    val viewModel: DiaryViewModel = viewModel()
-
-    val date = navController.currentBackStackEntry?.arguments?.getString("date") ?: ""
     val diary = viewModel.getDiaryByDate(date).collectAsState(initial = null)
 
     // 일기 삭제 여부 모달 상태
@@ -85,8 +80,8 @@ fun Written(navController: NavHostController, viewModel: DiaryViewModel, date: S
                 TextButton(
                     onClick = {
                         coroutineScope.launch {
-                            if(diary != null) {
-                                diary.value?.let { viewModel.delete(it) }
+                            if (diary.value != null) {
+                                viewModel.delete(diary.value!!)
                                 navController.navigate(Routes.Main.route)
                             }
                         }
@@ -119,11 +114,8 @@ fun Written(navController: NavHostController, viewModel: DiaryViewModel, date: S
                     .verticalScroll(scrollState), // 세로 스크롤을 적용합니다.
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start,
-
-                ) {
+            ) {
                 Spacer(modifier = Modifier.height(50.dp))
-
-
 
                 Text(
                     "일기", fontWeight = FontWeight.ExtraBold, fontSize = 32.sp,
@@ -163,14 +155,12 @@ fun Written(navController: NavHostController, viewModel: DiaryViewModel, date: S
                 Spacer(modifier = Modifier.height(16.dp))
                 Text("${diary.value?.exercises?.joinToString(", ") ?: "운동 없음"}")
 
-
-
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // 감정 체크박스
-                Text("감정을 선택하세요", fontWeight = FontWeight.Bold, fontSize = 24.sp)
+                // 감정
+                Text("감정", fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(16.dp))
                 Text("${diary.value?.emotion?.name ?: "감정 없음"}")
 
@@ -183,7 +173,6 @@ fun Written(navController: NavHostController, viewModel: DiaryViewModel, date: S
                 Text("${diary.value?.content ?: "내용 없음"}")
 
                 Spacer(modifier = Modifier.height(50.dp))
-
             }
         },
         bottomBar = {
