@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,6 +54,8 @@ fun Search(navController: NavHostController, viewModel: DiaryViewModel = viewMod
     var searchResults by remember { mutableStateOf<List<Diary>>(emptyList()) }
     var searchPerformed by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val scrollState = rememberScrollState()
+
 
 
     fun handleSearchClick() {
@@ -75,7 +79,8 @@ fun Search(navController: NavHostController, viewModel: DiaryViewModel = viewMod
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(top = 40.dp)
-                    .padding(bottom = 80.dp),
+                    .padding(bottom = 80.dp)
+                    .verticalScroll(scrollState),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {

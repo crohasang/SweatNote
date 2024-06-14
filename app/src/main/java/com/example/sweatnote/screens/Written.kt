@@ -33,7 +33,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.sweatnote.components.BottomBar
 import com.example.sweatnote.components.TopBar
@@ -111,7 +110,7 @@ fun Written(navController: NavHostController, viewModel: DiaryViewModel, date: S
                     .padding(horizontal = 16.dp)
                     .padding(top = 40.dp)
                     .padding(bottom = 100.dp)
-                    .verticalScroll(scrollState), // 세로 스크롤을 적용합니다.
+                    .verticalScroll(scrollState),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start,
             ) {
