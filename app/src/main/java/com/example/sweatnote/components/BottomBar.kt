@@ -1,6 +1,7 @@
 package com.example.sweatnote.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.sweatnote.R
 import com.example.sweatnote.navigation.Routes
 
@@ -27,46 +33,58 @@ fun BottomBar(navController: NavHostController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
-            .padding(bottom = 30.dp, start = 40.dp, end = 40.dp),
+            .padding(/*, start = 30.dp, end = 30.dp*/),
         horizontalArrangement = Arrangement.SpaceBetween
     ){
+        val currentBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = currentBackStackEntry?.destination?.route
+        var routeflag by remember { mutableStateOf(1) }
+        if(currentRoute == "Main") routeflag = 1
+        else if (currentRoute == "Statistics") routeflag = 2
+        else if (currentRoute == "Search") routeflag = 3
+
         BottomBarItem(
             text = "일기",
             iconResId = R.drawable.baseline_edit_calendar_24,
-            onClick = { navController.navigate(Routes.Written.route) }
+            isSelected = currentRoute == Routes.Main.route,
+            onClick = { navController.navigate(Routes.Main.route) }
         )
         BottomBarItem(
             text = "통계",
             iconResId = R.drawable.baseline_insert_chart_outlined_24,
+            isSelected = currentRoute == Routes.Statistics.route,
             onClick = { navController.navigate(Routes.Statistics.route) }
         )
         BottomBarItem(
             text = "검색",
             iconResId = R.drawable.baseline_manage_search_24,
+            isSelected = currentRoute == Routes.Search.route,
             onClick = { navController.navigate(Routes.Search.route) }
         )
     }
 }
 
 @Composable
-fun BottomBarItem(text: String, iconResId: Int, onClick: () -> Unit) {
+fun BottomBarItem(text: String, iconResId: Int, isSelected: Boolean, onClick: () -> Unit) {
+    val itemcolor = if(isSelected) Color.Gray else Color.Transparent
+    val textcolor = if(isSelected) Color.White else Color.Black
+
     Column(
-        modifier = Modifier
-            .clickable(onClick = onClick),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.clickable(onClick = onClick).background(color = itemcolor).size(width = 137.dp, height = 80.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         Image(
             painter = painterResource(id = iconResId),
             contentDescription = null,
-            modifier = Modifier.size(40.dp)
+            modifier = Modifier.size(30.dp)
         )
         Text(
             text = text,
             textAlign = TextAlign.Center,
-            fontSize = 25.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.Black
+            color = textcolor
         )
     }
 }

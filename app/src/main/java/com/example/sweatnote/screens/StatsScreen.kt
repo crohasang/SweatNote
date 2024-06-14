@@ -43,6 +43,7 @@ fun StatsScreen(navController: NavHostController, viewModel: DiaryViewModel) {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
+                    .padding(bottom = 100.dp)
                     .padding(top = 70.dp)
             ) {
                 Text("운동 횟수 통계", style = MaterialTheme.typography.bodyLarge)
@@ -68,4 +69,3 @@ fun StatsScreen(navController: NavHostController, viewModel: DiaryViewModel) {
         }
     )
 }
-

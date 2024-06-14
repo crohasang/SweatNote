@@ -119,6 +119,7 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: S
                     .fillMaxSize()
                     .padding(top = 40.dp)
                     .padding(horizontal = 16.dp)
+                    .padding(bottom = 80.dp)
                     .verticalScroll(scrollState)
                     .clickable(indication = null,
                         interactionSource = remember { MutableInteractionSource() }) { keyboardController?.hide() },

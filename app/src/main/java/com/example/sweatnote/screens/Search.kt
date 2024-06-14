@@ -74,7 +74,8 @@ fun Search(navController: NavHostController, viewModel: DiaryViewModel = viewMod
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 40.dp),
+                    .padding(top = 40.dp)
+                    .padding(bottom = 80.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
