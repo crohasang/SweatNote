@@ -110,7 +110,7 @@ fun Written(navController: NavHostController, viewModel: DiaryViewModel, date: S
                     .fillMaxSize()
                     .padding(horizontal = 16.dp)
                     .padding(top = 40.dp)
-                    .padding(bottom = 50.dp)
+                    .padding(bottom = 100.dp)
                     .verticalScroll(scrollState), // 세로 스크롤을 적용합니다.
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start,

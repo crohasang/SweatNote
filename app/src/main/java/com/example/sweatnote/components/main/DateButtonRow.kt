@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -39,7 +40,7 @@ fun DateButtonRow(flag: Boolean, date: String, navController: NavHostController)
                     colors = ButtonDefaults.buttonColors(containerColor = Color(
                         ContextCompat.getColor(LocalContext.current, R.color.teal_700)),
                         contentColor = Color.White)){
-                    Text("조회")
+                    Text("조회", fontWeight = FontWeight.Bold)
                 }
             }else{
                 Text("작성된 일기가 없습니다.", modifier = Modifier.padding(end = 20.dp), fontSize = 20.sp)
@@ -48,10 +49,8 @@ fun DateButtonRow(flag: Boolean, date: String, navController: NavHostController)
                 } catch (e: Exception) {
                     Log.e("Writing", "Error during going writing", e)
                 } },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(
-                        ContextCompat.getColor(LocalContext.current, R.color.teal_700)),
-                        contentColor = Color.White)){
-                    Text("작성")
+                    colors = ButtonDefaults.buttonColors(Color.LightGray)){
+                    Text("작성", color = Color.Black, fontWeight = FontWeight.Bold)
                 }
             }
         }

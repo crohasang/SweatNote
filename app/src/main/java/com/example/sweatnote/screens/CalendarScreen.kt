@@ -39,14 +39,17 @@ import com.example.sweatnote.components.main.DateButtonRow
 import com.example.sweatnote.example.DiaryViewModel
 import com.example.sweatnote.roomDB.Diary
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun CalendarScreen(navController: NavHostController) {
     var date by remember { mutableStateOf(LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)) }
+    val dateFormat = SimpleDateFormat("yyyyMMdd")
 
     var flag by remember { mutableStateOf(false)}
     val coroutineScope = rememberCoroutineScope()
@@ -70,6 +73,7 @@ fun CalendarScreen(navController: NavHostController) {
                 AndroidView(factory = { CalendarView(it) }, update = {
                     it.setOnDateChangeListener { _, year, month, day ->
                         date = "$year${String.format("%02d", month + 1)}${String.format("%02d", day)}"
+
                         coroutineScope.launch {
                             viewModel.getDiaryByDate(date).collect { diary: Diary? ->
                                 if (diary != null) {
@@ -83,8 +87,8 @@ fun CalendarScreen(navController: NavHostController) {
                     }
                     it.dateTextAppearance
 
-//                    it.maxDate=Calendar.getInstance().timeInMillis
-//                    it.setDate(dateFormat.parse(date)?.time ?:0)
+                    it.maxDate= Calendar.getInstance().timeInMillis
+                    it.setDate(dateFormat.parse(date)?.time ?:0)
                 })
                 Divider(
                     modifier = Modifier
