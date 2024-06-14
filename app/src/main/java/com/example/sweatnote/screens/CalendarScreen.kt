@@ -55,6 +55,7 @@ fun CalendarScreen(navController: NavHostController) {
     val coroutineScope = rememberCoroutineScope()
     val viewModel: DiaryViewModel = viewModel()
 
+
     val dancingscript = FontFamily(Font(R.font.dancingscript_semibold, FontWeight.SemiBold, FontStyle.Italic))
 
     Scaffold(

@@ -4,6 +4,8 @@ import DiaryTextField
 import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
@@ -67,6 +70,7 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: S
     var selectedFeeling by remember { mutableStateOf("") }
     var diaryEntry by remember { mutableStateOf("") }
 
+
     LaunchedEffect(key1 = date) {
         viewModel.getDiaryByDate(date).collect { it ->
             diary = it
@@ -82,10 +86,64 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: S
     val scrollState = rememberScrollState()
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    val isTextBlank = remember { mutableStateOf(false) }
+    val isWorkoutBlank = remember { mutableStateOf(false) }
+    val isFeelingBlank = remember { mutableStateOf(false) }
+
+    val shakeText by remember { mutableStateOf(androidx.compose.animation.core.Animatable(0f))}
+    val shakeWorkout by remember { mutableStateOf(androidx.compose.animation.core.Animatable(0f))}
+    val shakeFeeling by remember { mutableStateOf(androidx.compose.animation.core.Animatable(0f))}
+
     // 제출하기 버튼을 클릭했을 때 실행되는 함수
     fun handleSubmitClick() {
         coroutineScope.launch {
             try {
+
+                // 일기 내용이 비어있는지 확인
+                if (diaryEntry.isBlank()) {
+                    isTextBlank.value = true
+                    shakeText.animateTo(
+                        targetValue = 10f,
+                        animationSpec = tween(
+                            durationMillis = 100,
+                            easing = FastOutSlowInEasing
+                        )
+                    )
+                    shakeText.snapTo(0f)
+                }
+
+                // 운동 선택이 비어있는지 확인
+                if (selectedWorkouts.isEmpty()) {
+                    isWorkoutBlank.value = true
+                    shakeWorkout.animateTo(
+                        targetValue = 10f,
+                        animationSpec = tween(
+                            durationMillis = 100,
+                            easing = FastOutSlowInEasing
+                        )
+                    )
+                    shakeWorkout.snapTo(0f)
+                }
+
+                // 감정 선택이 비어있는지 확인
+                if (selectedFeeling.isBlank()) {
+                    isFeelingBlank.value = true
+                    shakeFeeling.animateTo(
+                        targetValue = 10f,
+                        animationSpec = tween(
+                            durationMillis = 100,
+                            easing = FastOutSlowInEasing
+                        )
+                    )
+                    shakeFeeling.snapTo(0f)
+                }
+
+                // 모든 필드가 채워져 있는지 확인
+                if (diaryEntry.isBlank() || selectedWorkouts.isEmpty() || selectedFeeling.isBlank()) {
+                    return@launch
+                }
+
+
                 val newDiary = Diary(
                     id = diary?.id ?: 0, // 기존 일기의 ID를 유지하여 업데이트를 수행합니다.
                     date = date,
@@ -141,6 +199,7 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: S
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
+                        .offset(x = shakeWorkout.value.dp)
                 ) {
                     itemsIndexed(workoutOptions) { index, workout ->
                         CheckboxWithText(
@@ -155,7 +214,7 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: S
                             text = workout
                         )
                         if (index < workoutOptions.size - 1) {
-                            Spacer(modifier = Modifier.width(16.dp)) // 체크박스 사이에 간격을 추가합니다.
+                            Spacer(modifier = Modifier.width(16.dp)) // 체크박스 사이에 간격을 추가
                         }
                     }
                 }
@@ -170,6 +229,7 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: S
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
+                        .offset(x = shakeFeeling.value.dp)
                 ) {
                     itemsIndexed(feelings) { index, feeling ->
                         CheckboxWithText(
@@ -182,7 +242,7 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: S
                             text = feeling
                         )
                         if (index < feelings.size - 1) {
-                            Spacer(modifier = Modifier.width(3.dp)) // 체크박스 사이에 간격을 추가합니다.
+                            Spacer(modifier = Modifier.width(3.dp)) // 체크박스 사이에 간격 추가
                         }
                     }
                 }
@@ -197,9 +257,9 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: S
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp), // 버튼과 TextField 사이에 간격을 추가합니다.
-                    verticalArrangement = Arrangement.Bottom, // 버튼을 아래에 위치시킵니다.
-                    horizontalAlignment = Alignment.End // 버튼을 오른쪽에 위치시킵니다.
+                        .padding(vertical = 8.dp),
+                    verticalArrangement = Arrangement.Bottom,
+                    horizontalAlignment = Alignment.End
                 ) {
                     DiaryTextField(
                         value = diaryEntry,
@@ -207,6 +267,7 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: S
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(300.dp)
+                            .offset(x = shakeText.value.dp)
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -219,7 +280,7 @@ fun Writing(navController: NavHostController, viewModel: DiaryViewModel, date: S
                             "제출하기",
                             color = Black,
                             fontWeight = FontWeight.Bold
-                        ) // 글자 색깔을 검은색으로, 글자를 굵게 설정합니다.
+                        )
                     }
                 }
             }
