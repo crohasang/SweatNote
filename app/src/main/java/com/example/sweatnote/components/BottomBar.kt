@@ -66,8 +66,8 @@ fun BottomBar(navController: NavHostController) {
 
 @Composable
 fun BottomBarItem(text: String, iconResId: Int, isSelected: Boolean, onClick: () -> Unit) {
-    val itemcolor = if(isSelected) Color.Gray else Color.Transparent
-    val textcolor = if(isSelected) Color.White else Color.Black
+    val itemcolor = if(isSelected) Color.Transparent else Color.LightGray
+    val textcolor = Color.Black
 
     Column(
         modifier = Modifier.clickable(onClick = onClick).background(color = itemcolor).size(width = 137.dp, height = 80.dp),
