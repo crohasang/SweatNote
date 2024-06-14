@@ -26,6 +26,8 @@ import com.example.sweatnote.components.BottomBar
 import com.example.sweatnote.components.TopBar
 import com.example.sweatnote.example.DiaryViewModel
 import com.example.sweatnote.graphViews.PieChartView
+import androidx.compose.foundation.text.BasicText
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
