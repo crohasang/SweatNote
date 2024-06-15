@@ -76,12 +76,12 @@ fun BarChartView(modifier: Modifier = Modifier, exerciseCounts: Map<ExerciseType
                             textSize = 12f
                             typeface = Typeface.DEFAULT_BOLD
                             granularity = 1f
-                            axisMinimum = 0f
+                            axisMinimum = -0.5f // X축 최소값을 -0.5로 설정하여 모든 레이블이 보이도록 설정
+                            axisMaximum = exerciseCounts.size - 0.5f // X축 최대값을 데이터 크기 - 0.5로 설정
                             labelCount = exerciseCounts.size
                             valueFormatter = object : ValueFormatter() {
                                 override fun getAxisLabel(value: Float, axis: AxisBase?): String {
-                                    return ExerciseType.entries.getOrNull(value.toInt() - 1)?.name
-                                        ?: ""
+                                    return exerciseCounts.entries.elementAtOrNull(value.toInt())?.key?.name ?: ""
                                 }
                             }
                         }
@@ -106,10 +106,10 @@ fun BarChartView(modifier: Modifier = Modifier, exerciseCounts: Map<ExerciseType
                 },
                 modifier = modifier,
                 update = { barChart ->
-                    val entries = exerciseCounts.map {
+                    val entries = exerciseCounts.entries.mapIndexed { index, entry ->
                         BarEntry(
-                            it.key.ordinal.toFloat() + 1,
-                            it.value.toFloat()
+                            index.toFloat(),
+                            entry.value.toFloat()
                         )
                     }
                     val dataSet = BarDataSet(entries, "운동 횟수").apply {
@@ -123,7 +123,7 @@ fun BarChartView(modifier: Modifier = Modifier, exerciseCounts: Map<ExerciseType
                         }
                     }
                     val barData = BarData(dataSet)
-                    barData.barWidth = 0.7f
+                    barData.barWidth = 0.5f
                     barChart.data = barData
                     barChart.invalidate()
                 }
