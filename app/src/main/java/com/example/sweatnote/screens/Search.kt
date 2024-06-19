@@ -135,7 +135,7 @@ fun Search(navController: NavHostController, viewModel: DiaryViewModel = viewMod
                     singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth(0.8f)
-                        .background(Color(0xFFF5F5F5))
+                        .background(Color.Transparent)
                         .offset(x = shake.value.dp),
                     keyboardActions = KeyboardActions(
                         onDone = {
