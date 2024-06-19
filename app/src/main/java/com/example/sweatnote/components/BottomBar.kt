@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
@@ -69,7 +70,8 @@ fun BottomBarItem(text: String, iconResId: Int, isSelected: Boolean, onClick: ()
         modifier = modifier
             .clickable(onClick = onClick)
             .background(color = itemcolor)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .height(80.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
