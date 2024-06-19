@@ -12,9 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,43 +31,45 @@ fun BottomBar(navController: NavHostController) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(/*, start = 30.dp, end = 30.dp*/),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceAround
     ){
         val currentBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = currentBackStackEntry?.destination?.route
-        var routeflag by remember { mutableStateOf(1) }
-        if(currentRoute == "Main") routeflag = 1
-        else if (currentRoute == "Statistics") routeflag = 2
-        else if (currentRoute == "Search") routeflag = 3
 
         BottomBarItem(
             text = "일기",
             iconResId = R.drawable.baseline_edit_calendar_24,
             isSelected = currentRoute == Routes.Main.route,
-            onClick = { navController.navigate(Routes.Main.route) }
+            onClick = { navController.navigate(Routes.Main.route) },
+            modifier = Modifier.weight(1f)
         )
         BottomBarItem(
             text = "통계",
             iconResId = R.drawable.baseline_insert_chart_outlined_24,
             isSelected = currentRoute == Routes.Statistics.route,
-            onClick = { navController.navigate(Routes.Statistics.route) }
+            onClick = { navController.navigate(Routes.Statistics.route) },
+            modifier = Modifier.weight(1f)
         )
         BottomBarItem(
             text = "검색",
             iconResId = R.drawable.baseline_manage_search_24,
             isSelected = currentRoute == Routes.Search.route,
-            onClick = { navController.navigate(Routes.Search.route) }
+            onClick = { navController.navigate(Routes.Search.route) },
+            modifier = Modifier.weight(1f)
         )
     }
 }
 
 @Composable
-fun BottomBarItem(text: String, iconResId: Int, isSelected: Boolean, onClick: () -> Unit) {
+fun BottomBarItem(text: String, iconResId: Int, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier) {
     val itemcolor = if(isSelected) Color.Transparent else Color.LightGray
     val textcolor = Color.Black
 
     Column(
-        modifier = Modifier.clickable(onClick = onClick).background(color = itemcolor).size(width = 137.dp, height = 80.dp),
+        modifier = modifier
+            .clickable(onClick = onClick)
+            .background(color = itemcolor)
+            .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
