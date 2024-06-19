@@ -43,7 +43,7 @@ fun StatsScreen(navController: NavHostController, viewModel: DiaryViewModel) {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
-                    .padding(bottom = 40.dp)
+                    .padding(bottom = 60.dp)
                     .padding(top = 70.dp)
                     .verticalScroll(scrollState)
             ) {
