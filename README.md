@@ -10,7 +10,7 @@
 # 👥 멤버 구성
 |[김한결](https://github.com/khg1652)| [방우혁](https://github.com/UhyeokBang) |[이승우](https://github.com/glsw9639)|[조하상](https://github.com/crohasang)| 
 |---|---|---|---|
-|메인 화면(달력) 구현 <br>하단바, 로고 구현<br>네비게이션 설계<br> apk 추출, 발표 영상 녹화|통계 화면 구현 <br> 보고서 작성(회의록, 결과물) <br>|데이터베이스 생성/연결/관리<br> 보고서 작성(결과물)|스플래시 구현 <br> 일기 작성 · 작성된 일기 · 검색 화면 구현 <br> 발표 영상 녹화|
+|메인 화면(달력) 구현 <br>하단바, 로고 구현<br>네비게이션 설계<br> apk 추출<br>발표 영상 녹화|통계 화면 구현 <br> 보고서 작성(회의록, 결과물) <br>|데이터베이스 생성/연결/관리<br> 보고서 작성(결과물)|스플래시 구현 <br> 일기 작성 · 작성된 일기 · 검색 화면 구현 <br>발표 자료 제작<br> 발표 영상 녹화|
 
 # 📌 개발 방법
 ![image](https://github.com/crohasang/SweatNote/assets/77558413/26f9ce6d-59c6-441f-989b-9cef1751ccc8)
